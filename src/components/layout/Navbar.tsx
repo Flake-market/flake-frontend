@@ -41,7 +41,7 @@ export function Navbar() {
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <h1>Wallet</h1>
+                        <a className="hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200 cursor-pointer">CONNECT</a>
                     </div>
                 </div>
             </nav>
