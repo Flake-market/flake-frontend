@@ -45,7 +45,7 @@ export type Market = {
 
 export const columns: ColumnDef<Market>[] = [
   {
-    accessorKey: "pairInfo",
+    id: "pairInfo",
     header: "Pair Info",
     cell: ({ row }) => (
       <div className="flex flex-col w-[200px]">
@@ -60,6 +60,14 @@ export const columns: ColumnDef<Market>[] = [
         </a>
       </div>
     ),
+    enableColumnFilter: true,
+    filterFn: (row, id, value) => {
+      return (
+        row.original.tokenName.toLowerCase().includes(value.toLowerCase()) ||
+        row.original.tokenTicker.toLowerCase().includes(value.toLowerCase()) ||
+        row.original.contractAddress.toLowerCase().includes(value.toLowerCase())
+      )
+    },
   },
   {
     accessorKey: "marketCap",
@@ -138,7 +146,7 @@ export const columns: ColumnDef<Market>[] = [
       </div>
     ),
     cell: ({ row }) => (
-        // TODO: add contract call to buy 
+        // TODO: add contract call to buy... will need row.original.contractAddress for each button.
       <Button variant="outline" size="sm" className="flex items-center gap-2">
         <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
         1 SOL
