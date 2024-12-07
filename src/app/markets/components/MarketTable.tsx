@@ -111,14 +111,7 @@ export const columns: ColumnDef<Market>[] = [
   {
     accessorKey: "transactions",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0"
-      >
-        Txns
-        <ArrowUpDown className="ml-2 h-4 w-4" />
-      </Button>
+      <div className="text-left font-medium">Txns</div>
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-1">
@@ -138,7 +131,12 @@ export const columns: ColumnDef<Market>[] = [
   },
   {
     id: "actions",
-    header: "Action",
+    header: () => (
+      <div className="flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Quick Buy
+      </div>
+    ),
     cell: ({ row }) => (
         // TODO: add contract call to buy 
       <Button variant="outline" size="sm" className="flex items-center gap-2">
@@ -187,7 +185,7 @@ export function MarketTable() {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-left">
+                  <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -224,23 +222,35 @@ export function MarketTable() {
           </TableBody>
         </Table>
       </div>
+
+      {/* TODO: Determine if we need pagination or infinite scroll based on:
+          - Expected number of markets (initial and growth)
+          - Performance impact of loading large datasets
+          - UX preference for market discovery
+          Current implementation uses basic pagination, consider:
+          - Infinite scroll for smoother browsing experience
+          - Virtual scrolling for better performance with large datasets
+          - Server-side pagination if dataset becomes too large
+      */}
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+        {table.getCanPreviousPage() && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+          >
+            Previous
+          </Button>
+        )}
+        {table.getCanNextPage() && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+          >
+            Next
+          </Button>
+        )}
       </div>
     </div>
   )
