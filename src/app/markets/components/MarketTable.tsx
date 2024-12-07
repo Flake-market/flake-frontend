@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+import { ArrowDownWideNarrow, Search, Zap } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -46,7 +46,7 @@ export type Market = {
 export const columns: ColumnDef<Market>[] = [
   {
     id: "pairInfo",
-    header: "Pair Info",
+    header: "PAIR",
     cell: ({ row }) => (
       <div className="flex flex-col w-[200px]">
         <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker})</span>
@@ -75,14 +75,19 @@ export const columns: ColumnDef<Market>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
       >
-        Market Cap
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        MARKET CAP
+        <ArrowDownWideNarrow 
+          className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+            column.getIsSorted() === "asc" ? "rotate-180" : 
+            column.getIsSorted() === "desc" ? "" : "opacity-50"
+          }`}
+        />
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex flex-col">
+      <div className="flex flex-col w-[140px]">
         <span>${row.original.marketCap.toLocaleString()}</span>
         <span className="text-sm text-muted-foreground">${row.original.price.toFixed(2)}</span>
       </div>
@@ -94,13 +99,18 @@ export const columns: ColumnDef<Market>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
       >
-        Liquidity
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        LIQUIDITY
+        <ArrowDownWideNarrow 
+          className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+            column.getIsSorted() === "asc" ? "rotate-180" : 
+            column.getIsSorted() === "desc" ? "" : "opacity-50"
+          }`}
+        />
       </Button>
     ),
-    cell: ({ row }) => <div>${row.original.liquidity.toLocaleString()}</div>,
+    cell: ({ row }) => <div className="w-[140px]">${row.original.liquidity.toLocaleString()}</div>,
   },
   {
     accessorKey: "volume",
@@ -108,21 +118,26 @@ export const columns: ColumnDef<Market>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
       >
-        Volume
-        <ArrowUpDown className="ml-2 h-4 w-4" />
+        VOLUME
+        <ArrowDownWideNarrow 
+          className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+            column.getIsSorted() === "asc" ? "rotate-180" : 
+            column.getIsSorted() === "desc" ? "" : "opacity-50"
+          }`}
+        />
       </Button>
     ),
-    cell: ({ row }) => <div>${row.original.volume.toLocaleString()}</div>,
+    cell: ({ row }) => <div className="w-[140px]">${row.original.volume.toLocaleString()}</div>,
   },
   {
     accessorKey: "transactions",
     header: ({ column }) => (
-      <div className="text-left font-medium">Txns</div>
+      <div className="text-left font-medium">TXNS</div>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 w-[100px]">
         <span className="text-green-500">{row.original.buys.toLocaleString()}</span>
         <span className="text-muted-foreground">/</span>
         <span className="text-red-500">{row.original.sells.toLocaleString()}</span>
@@ -131,26 +146,41 @@ export const columns: ColumnDef<Market>[] = [
   },
   {
     accessorKey: "created",
-    header: "Created",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
+      >
+        CREATED
+        <ArrowDownWideNarrow 
+          className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+            column.getIsSorted() === "asc" ? "rotate-180" : 
+            column.getIsSorted() === "desc" ? "" : "opacity-50"
+          }`}
+        />
+      </Button>
+    ),
     cell: ({ row }) => {
       const date = new Date(row.original.created * 1000);
-      return <div>{date.toLocaleDateString()}</div>;
+      return <div className="w-[120px]">{date.toLocaleDateString()}</div>;
     },
   },
   {
     id: "actions",
     header: () => (
       <div className="flex items-center gap-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Quick Buy
+        <Zap className="h-4 w-4" />
+        QUICK BUY
       </div>
     ),
     cell: ({ row }) => (
-        // TODO: add contract call to buy... will need row.original.contractAddress for each button.
-      <Button variant="outline" size="sm" className="flex items-center gap-2">
-        <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
-        1 SOL
-      </Button>
+      <div className="w-[120px]">
+        <Button variant="outline" size="sm" className="flex items-center gap-2">
+          <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
+          1 SOL
+        </Button>
+      </div>
     ),
   },
 ]
@@ -178,14 +208,17 @@ export function MarketTable() {
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Search markets..."
-          value={(table.getColumn("pairInfo")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("pairInfo")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-[50%] h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search markets..."
+            value={(table.getColumn("pairInfo")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("pairInfo")?.setFilterValue(event.target.value)
+            }
+            className="pl-10"
+          />
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
