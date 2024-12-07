@@ -184,7 +184,7 @@ export const columns: ColumnDef<Market>[] = [
     ),
     cell: ({ row }) => (
       <div className="w-[120px]">
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
+        <Button variant="outline" size="default" className="flex items-center gap-2 rounded-full">
           <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
           1 SOL
         </Button>
@@ -228,7 +228,7 @@ export function MarketTable() {
           />
         </div>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border-t border-b">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
