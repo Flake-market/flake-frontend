@@ -23,7 +23,7 @@
 </TECHNOLOGY_STACK>
 <FRONTEND>
     <OVERVIEW>
-        The frontend will consist of five pages: 1. Markets (Home) 2. Create 3. Manage 4. Market 5. Request
+        The frontend will consist of five pages: 1. Markets (Home) 2. Create 3. Manage 4. Pair 5. Request
     </OVERVIEW>
     <PAGES>
         <PAGE>
@@ -65,7 +65,7 @@
             </FEATURES>
         </PAGE>
         <PAGE>
-            <NAME>Market</NAME>
+            <NAME>Pair</NAME>
             <DESCRIPTION>The page that shows the attention token and its pair.</DESCRIPTION>
             <FEATURES>
                 <FEATURE>Top left panel header displays the token name, ticker, price, and token image.</FEATURE>
