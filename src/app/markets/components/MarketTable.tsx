@@ -48,16 +48,24 @@ export const columns: ColumnDef<Market>[] = [
     id: "pairInfo",
     header: "PAIR",
     cell: ({ row }) => (
-      <div className="flex flex-col w-[200px]">
-        <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker})</span>
-        <a 
-          href={`https://solscan.io/token/${row.original.contractAddress}`} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-sm text-lime-400 hover:underline"
-        >
-          {row.original.contractAddress.slice(0, 10)}...
-        </a>
+      <div className="flex items-center gap-3">
+        <Image
+          src="/images/tokens/pepe.svg"
+          alt="Token logo"
+          width={32}
+          height={32}
+        />
+        <div className="flex flex-col">
+          <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker})</span>
+          <a 
+            href={`https://solscan.io/token/${row.original.contractAddress}`} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-sm text-lime-400 hover:underline"
+          >
+            {row.original.contractAddress.slice(0, 10)}...
+          </a>
+        </div>
       </div>
     ),
     enableColumnFilter: true,
