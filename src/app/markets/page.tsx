@@ -1,7 +1,9 @@
-export default function Markets() {
-    return (
-      <main>
-        <h1>Markets</h1>
-      </main>
-    )
-  } 
+import { MarketTable } from "./components/MarketTable"
+
+export default function MarketsPage() {
+  return (
+    <div className="container mx-auto py-10">
+      <MarketTable />
+    </div>
+  )
+} 
