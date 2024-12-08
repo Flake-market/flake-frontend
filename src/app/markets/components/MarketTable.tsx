@@ -142,8 +142,9 @@ export const columns: ColumnDef<Market>[] = [
   },
   {
     accessorKey: "transactions",
-    header: ({ column }) => (
+    header: ({  }) => (
       <div className="text-left font-medium">TXNS</div>
+      
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-1 w-[100px]">
@@ -183,7 +184,7 @@ export const columns: ColumnDef<Market>[] = [
         QUICK BUY
       </div>
     ),
-    cell: ({ row }) => (
+    cell: ({  }) => (
       <div className="w-[120px]">
         <Button variant="outline" size="default" className="flex items-center gap-2 rounded-full">
           <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />

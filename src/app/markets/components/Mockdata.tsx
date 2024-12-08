@@ -19,7 +19,7 @@ export const data: Market[] = [
     {
       contractAddress: "0x2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
       tokenName: "WEI DAI",
-      tokenTicker: "WEI/SOL",
+      tokenTicker: "WEI",
       pairToken: "SOL",
       marketCap: 750000,
       price: 0.75,
@@ -33,7 +33,7 @@ export const data: Market[] = [
     {
       contractAddress: "0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0",
       tokenName: "CZ",
-      tokenTicker: "CZ/SOL",
+      tokenTicker: "CZ",
       pairToken: "SOL",
       marketCap: 2000000,
       price: 2.25,
@@ -61,7 +61,7 @@ export const data: Market[] = [
     {
       contractAddress: "0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4",
       tokenName: "GAVIN",
-      tokenTicker: "YORK/SOL",
+      tokenTicker: "YORK",
       pairToken: "SOL",
       marketCap: 900000,
       price: 1.2,
