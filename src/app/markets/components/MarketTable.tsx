@@ -41,6 +41,7 @@ export type Market = {
   buys: number
   sells: number
   created: number
+  logoUrl: string   
 }
 
 export const columns: ColumnDef<Market>[] = [
@@ -50,13 +51,13 @@ export const columns: ColumnDef<Market>[] = [
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
         <Image
-          src="/images/tokens/pepe.svg"
+          src={row.original.logoUrl}
           alt="Token logo"
           width={32}
           height={32}
         />
         <div className="flex flex-col">
-          <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker})</span>
+          <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker}/{row.original.pairToken})</span>
           <a 
             href={`https://solscan.io/token/${row.original.contractAddress}`} 
             target="_blank" 

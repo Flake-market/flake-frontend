@@ -5,7 +5,7 @@ export const data: Market[] = [
     {
       contractAddress: "0xf1fdc83c3a336bdbdc9fb06e318b08eaddc82ff4",
       tokenName: "VITALIK",
-      tokenTicker: "VTL/SOL",
+      tokenTicker: "VTL",
       pairToken: "SOL", 
       marketCap: 1000000,
       price: 1.5,
@@ -13,7 +13,8 @@ export const data: Market[] = [
       volume: 50000,
       buys: 12,
       sells: 3,
-      created: 1733576032
+      created: 1733576032,
+      logoUrl: "/images/tokens/pepe.svg"
     },
     {
       contractAddress: "0x2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
@@ -26,7 +27,8 @@ export const data: Market[] = [
       volume: 35000,
       buys: 8,
       sells: 5,
-      created: 1733489632
+      created: 1733489632,
+      logoUrl: "/images/tokens/pepe.svg"
     },
     {
       contractAddress: "0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0",
@@ -39,7 +41,8 @@ export const data: Market[] = [
       volume: 120000,
       buys: 25,
       sells: 8,
-      created: 1733403232
+      created: 1733403232,
+      logoUrl: "/images/tokens/pepe.svg"
     },
     {
       contractAddress: "0x1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0",
@@ -52,7 +55,8 @@ export const data: Market[] = [
       volume: 25000,
       buys: 5,
       sells: 15,
-      created: 1733316832
+      created: 1733316832,
+      logoUrl: "/images/tokens/pepe.svg"
     },
     {
       contractAddress: "0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4",
@@ -65,6 +69,7 @@ export const data: Market[] = [
       volume: 45000,
       buys: 15,
       sells: 4,
-      created: 1733144032
+      created: 1733144032,
+      logoUrl: "/images/tokens/pepe.svg"
     }
   ]

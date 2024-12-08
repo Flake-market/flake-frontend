@@ -2,7 +2,7 @@
 
 export default function SummaryPanel() {
     return (
-      <h1>SummaryPanel</h1>
+        <h1>SummaryPanel</h1>
     )
   }
   
