@@ -30,28 +30,28 @@ export default function PairPage() {
         <div className="grid grid-cols-[1fr,418.5px] h-full w-full border-b ">
         <div className="grid grid-rows-[68px,1fr,240px]">
             <section>
-            <HeaderPanel 
-                contractAddress={pairData.contractAddress}
-                tokenTicker={pairData.tokenTicker}
-                pairToken={pairData.pairToken}
-                price={pairData.price}
-                logoUrl={pairData.logoUrl}
-            />
+                <HeaderPanel 
+                    contractAddress={pairData.contractAddress}
+                    tokenTicker={pairData.tokenTicker}
+                    pairToken={pairData.pairToken}
+                    price={pairData.price}
+                    logoUrl={pairData.logoUrl}
+                />
             </section>
             <section className="overflow-hidden border-y ">
-            <ChartPanel />
+                <ChartPanel />
             </section>
             <section>
-            <TransactionsPanel contractAddress={pairData.contractAddress} />
+                <TransactionsPanel contractAddress={pairData.contractAddress} />
             </section>
         </div>
         
         <div className="overflow-y-auto border-l">
             <section className="h-[250px] border-b">
-            <SummaryPanel />
+                <SummaryPanel />
             </section>
             <section>
-            <ActionPanel />
+                <ActionPanel />
             </section>
         </div>
         </div>

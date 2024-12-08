@@ -77,7 +77,7 @@ export default function TransactionsPanel({ contractAddress }: TransactionsPanel
                         <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>${transaction.totalUsd}</TableCell>
                         <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>
                             <div className="flex items-center gap-3">
-                            <Image src="/images/tokens/solana.svg" alt="SOL" width={14} height={14} />
+                            <Image src="/images/tokens/solana.svg" alt="SOL" width={14} height={14}/>
                             {transaction.priceSol}
                             </div>
                         </TableCell>

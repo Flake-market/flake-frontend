@@ -4,10 +4,10 @@ import React, { useEffect, useRef, memo } from 'react';
 function TradingViewWidget() {
   const container = useRef();
 
-  useEffect(
-    () => {
+  useEffect(() => {
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
       if (container.current) {
-
         container.current.innerHTML = '';
 
         const script = document.createElement("script");
@@ -33,14 +33,15 @@ function TradingViewWidget() {
 
         container.current.appendChild(script);
       }
+    }, 100); // 100ms delay
 
-      return () => {
-        if (container.current) {
-          container.current.innerHTML = '';
-        }
-      };
-    },
-  );
+    return () => {
+      clearTimeout(timer);
+      if (container.current) {
+        container.current.innerHTML = '';
+      }
+    };
+  }, []);
 
   return (
     <div ref={container} className="tradingview-widget-container" style={{ height: "100%", width: "100%" }}>
