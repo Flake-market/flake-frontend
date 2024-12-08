@@ -17,7 +17,7 @@ export default function RootLayout({
       <body>
       <div className="w-full custom-background min-h-screen">
           <Navbar />
-          <div className="p-2 mx-4 h-[calc(100vh-66px)]">
+          <div className="h-[calc(100vh-66px)]">
             {children}
           </div>
         </div>
