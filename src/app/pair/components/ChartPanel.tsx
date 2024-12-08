@@ -1,8 +1,9 @@
 "use client"
+import TradingViewWidget from "./TradingView"
 
 export default function ChartPanel() {
   return (
-    <h1>ChartPanel</h1>
+    <TradingViewWidget />
   )
 }
 
