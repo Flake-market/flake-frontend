@@ -34,7 +34,6 @@ export function Navbar() {
                         </a>
 
                         <div className="ml-8 flex items-center space-x-4">
-                            <Separator orientation="vertical" className="h-6 w-px bg-gray-300 dark:bg-gray-700" />
                             <Link href="/markets" className={getClassName('markets')}>Markets</Link>
                             <Link href="/create" className={getClassName('create')}>Create</Link>
                             <Link href="/manage" className={getClassName('manage')}>Manage</Link>
