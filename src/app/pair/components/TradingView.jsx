@@ -5,10 +5,12 @@ function TradingViewWidget() {
   const container = useRef();
 
   useEffect(() => {
-    // Add a small delay to ensure DOM is ready
+    // Store the ref's value in a variable
+    const currentContainer = container.current;
+
     const timer = setTimeout(() => {
-      if (container.current) {
-        container.current.innerHTML = '';
+      if (currentContainer) {
+        currentContainer.innerHTML = '';
 
         const script = document.createElement("script");
         script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
@@ -31,14 +33,14 @@ function TradingViewWidget() {
           "support_host": "https://www.tradingview.com"
         }`;
 
-        container.current.appendChild(script);
+        currentContainer.appendChild(script);
       }
-    }, 100); // 100ms delay
+    }, 100);
 
     return () => {
       clearTimeout(timer);
-      if (container.current) {
-        container.current.innerHTML = '';
+      if (currentContainer) {
+        currentContainer.innerHTML = '';
       }
     };
   }, []);
