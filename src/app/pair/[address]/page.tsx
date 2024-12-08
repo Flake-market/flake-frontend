@@ -42,7 +42,7 @@ export default function PairPage() {
             <ChartPanel />
             </section>
             <section>
-            <TransactionsPanel />
+            <TransactionsPanel contractAddress={pairData.contractAddress} />
             </section>
         </div>
         
