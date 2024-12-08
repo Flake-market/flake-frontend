@@ -1,7 +1,6 @@
 'use client'
 
 import { Logo } from '@/components/layout/Logo';
-import { Separator } from '@/components/ui/separator';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useMemo } from 'react';
@@ -29,9 +28,9 @@ export function Navbar() {
             <nav className="mx-4 p-2">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                        <a href="/">
+                        <Link href="/">
                             <Logo />
-                        </a>
+                        </Link>
 
                         <div className="ml-8 flex items-center space-x-4">
                             <Link href="/markets" className={getClassName('markets')}>Markets</Link>
