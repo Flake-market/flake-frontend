@@ -7,21 +7,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { sanitizeInput } from "@/lib/utils";
+import { ArrowDown } from "lucide-react";
 
-export default function ActionPanel() {
+export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: string, logoUrl: string }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
     const [amount, setAmount] = useState<number>(0);
 
-    // TODO: get account from wallet
+    // TODO: get account and balances from wallet
     let account = "0x0000000000000000000000000000000000000000";
     let solBalance = 100000;
+    let atnBalance = 100000;
+
+    const pairToken = "SOL";
 
     const handleMaxSizeClick = () => {
         if (account) {
             //TODO: get sol balance from wallet
-            setAmount(solBalance);
-            setInput(solBalance.toString());
+            if (isBuy) {
+                setAmount(solBalance);
+                setInput(solBalance.toString());
+            } else {
+                setAmount(atnBalance);
+                setInput(atnBalance.toString());
+            }
         }
     };
 
@@ -43,26 +52,44 @@ export default function ActionPanel() {
                     <TabsTrigger value="false" className="text-sm h-full data-[state=active]:bg-lime-600 data-[state=active]:text-white">Sell</TabsTrigger>
                 </TabsList>
             </Tabs>
-            <div className="flex flex-col m-4">
+            <div className="flex flex-col mt-4 mx-4 mb-2">
                 <div className="flex justify-between items-center m-2 text-muted-foreground">
-                    <Label className="text-sm">Amount (SOL)</Label>
+                    <Label className="text-sm">Amount ({isBuy ? pairToken : tokenTicker})</Label>
                     <Button
                         variant="link"
                         size="sm"
                         onClick={handleMaxSizeClick}
-                        disabled={!account || solBalance === 0}
+                        disabled={!account || (isBuy ? solBalance : atnBalance) === 0}
                         className="h-6 px-2 text-sm text-lime-500"
                     >
-                        Balance: {solBalance} SOL
+                        Balance: {isBuy ? solBalance : atnBalance} {isBuy ? pairToken : tokenTicker}
                     </Button>
                 </div>
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src="/images/tokens/solana.svg" alt="SOL" width={20} height={20} />
+                        <Image src={isBuy ? "/images/tokens/solana.svg" : logoUrl} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} />
                     </div>
                     <Input
                         type="text"
-                        placeholder="Amount to buy in SOL"
+                        placeholder={`Amount to ${isBuy ? 'buy' : 'sell'} in ${isBuy ? pairToken : tokenTicker}`}
+                        className="h-12 text-left pl-10"
+                        onChange={handleInputChange}
+                        value={input}
+                    />
+                </div>
+                
+            </div>
+            <div className="flex justify-center items-center">  
+                <ArrowDown className="w-6 h-6 text-muted-foreground" />
+            </div>
+            <div className="flex flex-col mb-6 mx-4 mt-2">
+                <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                        <Image src={isBuy ? logoUrl : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} />
+                    </div>
+                    <Input
+                        type="text"
+                        placeholder={`Amount to receive in ${isBuy ? tokenTicker : pairToken}`}
                         className="h-12 text-left pl-10"
                         onChange={handleInputChange}
                         value={input}

@@ -59,7 +59,10 @@ export default function PairPage() {
                 />
             </section>
             <section>
-                <ActionPanel />
+                <ActionPanel 
+                    tokenTicker={pairData.tokenTicker}
+                    logoUrl={pairData.logoUrl}
+                />
             </section>
         </div>
         </div>
