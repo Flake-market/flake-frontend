@@ -51,7 +51,7 @@ export default function SummaryPanel({ tokenName, description, socials }: Summar
           )}
         </div>
       </div>
-      <p className="mb-6">
+      <p className="mb-6 text-muted-foreground">
         {description ? (
           description.length > 100 ? (
             <span>
