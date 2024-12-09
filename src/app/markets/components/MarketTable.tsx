@@ -42,6 +42,12 @@ export type Market = {
   sells: number
   created: number
   logoUrl: string   
+  socials: {
+    x?: string;
+    telegram?: string;
+    website?: string;
+  };
+  description: string;
 }
 
 export const columns: ColumnDef<Market>[] = [

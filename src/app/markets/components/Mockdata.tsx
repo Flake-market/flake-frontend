@@ -14,10 +14,16 @@ export const data: Market[] = [
       buys: 12,
       sells: 3,
       created: 1733576032,
-      logoUrl: "/images/tokens/pepe.svg"
+      logoUrl: "/images/tokens/pepe.svg",
+      socials: {
+        x: "https://x.com/pepe",
+        telegram: "https://x.com/pepe",
+        website: "https://x.com/pepe"
+      },
+      description: "The attention token of Vitalik Buterin, co-founder of Ethereum. Get access to his insights on blockchain technology, cryptocurrency, and the future of decentralized systems."
     },
     {
-      contractAddress: "0x2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1",
+      contractAddress: "0x2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1", 
       tokenName: "WEI DAI",
       tokenTicker: "WEI",
       pairToken: "SOL",
@@ -28,12 +34,18 @@ export const data: Market[] = [
       buys: 8,
       sells: 5,
       created: 1733489632,
-      logoUrl: "/images/tokens/pepe.svg"
+      logoUrl: "/images/tokens/pepe.svg",
+      socials: {
+        x: "",
+        telegram: "",
+        website: ""
+      },
+      description: ""
     },
     {
       contractAddress: "0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0",
       tokenName: "CZ",
-      tokenTicker: "CZ",
+      tokenTicker: "CZ", 
       pairToken: "SOL",
       marketCap: 2000000,
       price: 2.25,
@@ -42,13 +54,19 @@ export const data: Market[] = [
       buys: 25,
       sells: 8,
       created: 1733403232,
-      logoUrl: "/images/tokens/pepe.svg"
+      logoUrl: "/images/tokens/pepe.svg",
+      socials: {
+        x: "https://x.com/pepe",
+        telegram: "https://x.com/pepe",
+        website: "https://x.com/pepe"
+      },
+      description: "The attention token of Changpeng Zhao (CZ), founder and CEO of Binance. A lot of experience in the crypto space."
     },
     {
       contractAddress: "0x1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0",
       tokenName: "SZABO",
       tokenTicker: "SZABO/SOL",
-      pairToken: "SOL",
+      pairToken: "SOL", 
       marketCap: 500000,
       price: 0.5,
       liquidity: 150000,
@@ -56,7 +74,13 @@ export const data: Market[] = [
       buys: 5,
       sells: 15,
       created: 1733316832,
-      logoUrl: "/images/tokens/pepe.svg"
+      logoUrl: "/images/tokens/pepe.svg",
+      socials: {
+        x: "https://x.com/pepe",
+        telegram: "https://x.com/pepe",
+        website: "https://x.com/pepe"
+      },
+      description: "The attention token of Nick Szabo, computer scientist and cryptographer who designed BitGold. Access his thoughts on smart contracts, digital currency, and the intersection of law and cryptocurrency."
     },
     {
       contractAddress: "0x5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4",
@@ -70,7 +94,13 @@ export const data: Market[] = [
       buys: 15,
       sells: 4,
       created: 1733144032,
-      logoUrl: "/images/tokens/pepe.svg"
+      logoUrl: "/images/tokens/pepe.svg",
+      socials: {
+        x: "https://x.com/pepe",
+        telegram: "https://x.com/pepe",
+        website: "https://x.com/pepe"
+      },
+      description: "The attention token of Gavin Wood, co-founder of Ethereum and creator of Polkadot. Get access to his expertise in blockchain interoperability, substrate development, and Web3 technology."
     }
   ]
 

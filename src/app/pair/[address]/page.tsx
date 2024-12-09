@@ -48,7 +48,15 @@ export default function PairPage() {
         
         <div className="overflow-y-auto border-l">
             <section className="h-[250px] border-b">
-                <SummaryPanel />
+                <SummaryPanel
+                    tokenName={pairData.tokenName}
+                    description={pairData.description}
+                    socials={{
+                        x: pairData.socials?.x,
+                        telegram: pairData.socials?.telegram,
+                        website: pairData.socials?.website
+                    }}
+                />
             </section>
             <section>
                 <ActionPanel />
