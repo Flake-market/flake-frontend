@@ -18,9 +18,9 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
     
     // ============= MOCK DATA =============
     // TODO: get account and balances from wallet
-    let account = "0x0000000000000000000000000000000000000000";
-    let solBalance = 100000;
-    let atnBalance = 100000;
+    const account = "0x0000000000000000000000000000000000000000";
+    const solBalance = 100000;
+    const atnBalance = 100000;
 
     const pairToken = "SOL";
 
@@ -71,6 +71,7 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
             } else {
                 setOutput(solAmount.toString());
                 setAmount(Number(sanitizedValue));
+                console.log(amount);
             }
         }
     };
