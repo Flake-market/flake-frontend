@@ -51,6 +51,7 @@ export default function PairPage() {
                 <SummaryPanel
                     tokenName={pairData.tokenName}
                     description={pairData.description}
+                    contractAddress={pairData.contractAddress}
                     socials={{
                         x: pairData.socials?.x,
                         telegram: pairData.socials?.telegram,
