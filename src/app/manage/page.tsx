@@ -149,7 +149,7 @@ export default function Manage() {
                       href={`https://solscan.io/tx/${request.txnHash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center hover:text-lime-500"
+                      className="flex items-center text-lime-500 hover:underline"
                     >
                       {`${request.txnHash.slice(0, 6)}...${request.txnHash.slice(-4)}`}
                       <ExternalLink className="ml-1 h-3 w-3" />
