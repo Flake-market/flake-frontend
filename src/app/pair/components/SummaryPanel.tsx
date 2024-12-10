@@ -13,14 +13,15 @@ interface SummaryPanelProps {
     telegram?: string;
     website?: string;
   };
+  contractAddress: string;
 }
 
-export default function SummaryPanel({ tokenName, description, socials }: SummaryPanelProps) {
+export default function SummaryPanel({ tokenName, description, socials, contractAddress }: SummaryPanelProps) {
   const router = useRouter();
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const handleRequestClick = () => {
-    router.push('/pair/[address]/request');
+    router.push(`/pair/${contractAddress}/request`);
   };
 
   return (
