@@ -6,14 +6,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { sanitizeInput } from "@/lib/utils";
+import { sanitizeInput, calculateSol } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
 
 export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: string, logoUrl: string }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
+    const [output, setOutput] = useState<string>("");
     const [amount, setAmount] = useState<number>(0);
 
+    
+    // ============= MOCK DATA =============
     // TODO: get account and balances from wallet
     let account = "0x0000000000000000000000000000000000000000";
     let solBalance = 100000;
@@ -21,30 +24,87 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
 
     const pairToken = "SOL";
 
+    const minPrice = 0.0004;
+    const maxPrice = 0.1;
+    const maxSupply = 1000000;
+    const currentSupply = 500000;
+    const spread = 0.01;
+
+    // ===================================
+
+    const handleTabChange = (value: string) => {
+        setIsBuy(value === "true");
+        setInput("");
+        setOutput("");
+        setAmount(0);
+    };
+
     const handleMaxSizeClick = () => {
         if (account) {
             //TODO: get sol balance from wallet
             if (isBuy) {
-                setAmount(solBalance);
-                setInput(solBalance.toString());
+                handleInputChange({ target: { value: solBalance.toString() } } as React.ChangeEvent<HTMLInputElement>);
             } else {
-                setAmount(atnBalance);
-                setInput(atnBalance.toString());
+                handleInputChange({ target: { value: atnBalance.toString() } } as React.ChangeEvent<HTMLInputElement>);
             }
         }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const sanitizedValue = sanitizeInput(e.target.value);
-        setAmount(Number(sanitizedValue));
         setInput(sanitizedValue);
+        if (isBuy) {
+            /// @TODO: Need to determine formula for buy
+            const atnAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            if (atnAmount === 0) {
+                setOutput("");
+                setAmount(0);
+            } else {
+                setOutput(atnAmount.toString());
+                setAmount(atnAmount);
+            }
+        } else {
+            const solAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            if (solAmount === 0) {
+                setOutput("");
+                setAmount(0);
+            } else {
+                setOutput(solAmount.toString());
+                setAmount(Number(sanitizedValue));
+            }
+        }
+    };
+
+    const handleOutputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const sanitizedValue = sanitizeInput(e.target.value);
+        setOutput(sanitizedValue);
+        if (isBuy) {
+            const solAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            if (solAmount === 0) {
+                setInput("");
+                setAmount(0);
+            } else {
+                setInput(solAmount.toString());
+                setAmount(Number(sanitizedValue));
+            }
+        } else {
+            // @TODO: Need to determine formula for sell if sol is used as an input
+            const atnAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            if (atnAmount === 0) {
+                setInput("");
+                setAmount(0);
+            } else {
+                setInput(atnAmount.toString());
+                setAmount(atnAmount);
+            }
+        }
     };
 
     return (
         <div className="mt-4">
             <Tabs defaultValue="buy"
                 className="w-[400px] h-[58px] flex items-center justify-center m-2"
-                onValueChange={(value) => setIsBuy(value === 'true')}
+                onValueChange={handleTabChange}
                 value={isBuy.toString()}
             >
                 <TabsList className="grid w-full grid-cols-2 h-full rounded-md overflow-hidden">
@@ -91,8 +151,8 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
                         type="text"
                         placeholder={`Amount to receive in ${isBuy ? tokenTicker : pairToken}`}
                         className="h-12 text-left pl-10"
-                        onChange={handleInputChange}
-                        value={input}
+                        onChange={handleOutputChange}
+                        value={output}
                     />
                 </div>
             </div>
