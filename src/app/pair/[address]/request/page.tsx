@@ -1,8 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useParams } from 'next/navigation'
-import Image from "next/image";
 import { ExternalLink } from "lucide-react";
+import { Market } from "@/app/markets/components/MarketTable";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -41,9 +43,10 @@ const mockRequests: Request[] = [
 ];
 
 export default function RequestPage() {
-  const [pairData, setPairData] = useState<any>(null);
+  const [pairData, setPairData] = useState<Market | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "completed">("all");
+  const [open, setOpen] = useState(false);
 
   const params = useParams();
 
@@ -100,9 +103,25 @@ export default function RequestPage() {
           <p className="text-muted-foreground">
             Get a sponsored post on X.
           </p>
-          <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-lime-600 transition-colors">
-            Request
-          </button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-lime-600 transition-colors">
+                Request
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Request Details</DialogTitle>
+              </DialogHeader>
+              <Textarea
+                placeholder="Input your text request: E.g. X sponsored post regarding my AI Agent X on Solana"
+                className="w-full h-40"
+              />
+              <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4">
+                1000 {pairData.tokenTicker}
+              </button>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
