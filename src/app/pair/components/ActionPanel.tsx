@@ -166,7 +166,14 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
                   <Tooltip>
                     <TooltipTrigger asChild>
                         <div className="flex w-full justify-center items-center">
-                            <Button className="bg-lime-500 text-white w-full" disabled={!connected}>
+                            <Button 
+                                className={`w-full h-12 text-sm font-medium ${
+                                    connected 
+                                    ? "bg-lime-500 hover:bg-lime-700 text-white" 
+                                    : "bg-gray-400 text-gray-100"
+                                }`}
+                                disabled={!connected}
+                            >
                                 {isBuy ? "Buy" : "Sell"}
                             </Button>
                         </div>

@@ -4,6 +4,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Globe } from 'lucide-react';
 import { useState } from 'react';
+import { useWallet } from '@/contexts/WalletContext';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Button } from '@/components/ui/button';
 
 interface SummaryPanelProps {
   tokenName: string;
@@ -19,6 +22,7 @@ interface SummaryPanelProps {
 export default function SummaryPanel({ tokenName, description, socials, contractAddress }: SummaryPanelProps) {
   const router = useRouter();
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { connected } = useWallet();
 
   const handleRequestClick = () => {
     router.push(`/pair/${contractAddress}/request`);
@@ -71,12 +75,30 @@ export default function SummaryPanel({ tokenName, description, socials, contract
           <span className="text-muted-foreground text-red-500">[No description provided]</span>
         )}
       </p>
-      <button
-        onClick={handleRequestClick}
-        className="px-6 py-2 bg-lime-600 text-white rounded hover:bg-lime-700"
-      >
-        Request
-      </button>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="w-full">
+              <Button 
+                onClick={handleRequestClick}
+                className={`h-12 text-sm font-medium ${
+                  connected 
+                    ? "bg-lime-500 hover:bg-lime-700 text-white" 
+                    : "bg-gray-400 text-gray-100"
+                }`}
+                disabled={!connected}
+              >
+                Request
+              </Button>
+            </div>
+          </TooltipTrigger>
+          {!connected && (
+            <TooltipContent side="bottom">
+              <p>Please connect your wallet to continue</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 }
