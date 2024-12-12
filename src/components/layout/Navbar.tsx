@@ -4,17 +4,19 @@ import { Logo } from '@/components/layout/Logo';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useMemo } from 'react';
+import { useWallet } from '@/contexts/WalletContext';
 
 type Section = 'markets' | 'create' | 'manage' | 'none';
 
 export function Navbar() {
     const pathname = usePathname();
+    const { connect, disconnect, connected, connecting, publicKey } = useWallet();
 
     const section: Section = useMemo(() => {
         if (pathname.startsWith('/markets')) return 'markets';
         if (pathname.startsWith('/create')) return 'create';
         if (pathname.startsWith('/manage')) return 'manage';
-        return 'none'; // Default to root for any other recognized paths
+        return 'none';
     }, [pathname]);
 
     const getClassName = (activeSection: Section) => {
@@ -22,6 +24,20 @@ export function Navbar() {
         const inactiveClassName = 'text-muted-foreground hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200';
         return `${section === activeSection ? activeClassName : inactiveClassName}`
     }
+
+    const handleWalletClick = () => {
+        if (connected) {
+            disconnect();
+        } else {
+            connect();
+        }
+    };
+
+    const getWalletButtonText = () => {
+        if (connecting) return 'Connecting...';
+        if (connected) return publicKey?.slice(0, 4) + '...' + publicKey?.slice(-4);
+        return 'CONNECT';
+    };
 
     return (
         <div className="border-b">
@@ -39,7 +55,13 @@ export function Navbar() {
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <a className="hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200 cursor-pointer">CONNECT</a>
+                        <button 
+                            onClick={handleWalletClick}
+                            disabled={connecting}
+                            className="hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200 cursor-pointer disabled:opacity-50"
+                        >
+                            {getWalletButtonText()}
+                        </button>
                     </div>
                 </div>
             </nav>

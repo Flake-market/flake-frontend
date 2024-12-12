@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
+import { WalletProvider } from "@/contexts/WalletContext";
 
 export const metadata: Metadata = {
   title: "atn.fun",
@@ -15,12 +16,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-      <div className="w-full custom-background min-h-screen">
-          <Navbar />
-          <div className="h-[calc(100vh-66px)]">
-            {children}
+        <WalletProvider>
+          <div className="w-full custom-background min-h-screen">
+            <Navbar />
+            <div className="h-[calc(100vh-66px)]">
+              {children}
+            </div>
           </div>
-        </div>
+        </WalletProvider>
       </body>
     </html>
   );
