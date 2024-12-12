@@ -8,12 +8,16 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { sanitizeInput, calculateSol } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
+import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useWallet } from "@/contexts/WalletContext";
 
 export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: string, logoUrl: string }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
     const [output, setOutput] = useState<string>("");
     const [amount, setAmount] = useState<number>(0);
+    const { connected } = useWallet();
 
     
     // ============= MOCK DATA =============
@@ -158,9 +162,29 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
                 </div>
             </div>
             <div className="flex flex-col m-4">
-                <Button className="bg-lime-500 text-white">
-                    {isBuy ? "Buy" : "Sell"}
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                        <div className="flex w-full justify-center items-center">
+                            <Button 
+                                className={`w-full h-12 text-sm font-medium ${
+                                    connected 
+                                    ? "bg-lime-500 hover:bg-lime-700 text-white" 
+                                    : "bg-gray-400 text-gray-100"
+                                }`}
+                                disabled={!connected}
+                            >
+                                {isBuy ? "Buy" : "Sell"}
+                            </Button>
+                        </div>
+                    </TooltipTrigger>
+                    {!connected && (
+                        <TooltipContent side="bottom">
+                            <p>Please connect your wallet to continue</p>
+                        </TooltipContent>
+                    )}
+                  </Tooltip>
+                </TooltipProvider>
             </div>
         </div>
     )
