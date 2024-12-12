@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useWallet } from '@/contexts/WalletContext';
-
+import { Button } from '@/components/ui/button';
 type Section = 'markets' | 'create' | 'manage' | 'none';
 
 export function Navbar() {
@@ -35,7 +35,12 @@ export function Navbar() {
 
     const getWalletButtonText = () => {
         if (connecting) return 'Connecting...';
-        if (connected) return publicKey?.slice(0, 4) + '...' + publicKey?.slice(-4);
+        if (connected) return (
+            <div className="flex items-center gap-2">
+                <img src="/images/wallet/phantom.svg" alt="Phantom" className="w-4 h-4 rounded-full" />
+                {publicKey?.slice(0, 4) + '...' + publicKey?.slice(-4)}
+            </div>
+        );
         return 'CONNECT';
     };
 
@@ -55,13 +60,13 @@ export function Navbar() {
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
-                        <button 
+                        <Button
                             onClick={handleWalletClick}
                             disabled={connecting}
-                            className="hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200 cursor-pointer disabled:opacity-50"
+                            className="border border-lime-500 text-lime-500 hover:bg-lime-500/10 bg-transparent px-4 py-1.5 rounded-sm transition-all duration-200 cursor-pointer disabled:opacity-50"
                         >
                             {getWalletButtonText()}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </nav>
