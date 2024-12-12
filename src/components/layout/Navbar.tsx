@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image';
 import { Logo } from '@/components/layout/Logo';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -37,7 +38,7 @@ export function Navbar() {
         if (connecting) return 'Connecting...';
         if (connected) return (
             <div className="flex items-center gap-2">
-                <img src="/images/wallet/phantom.svg" alt="Phantom" className="w-4 h-4 rounded-full" />
+                <Image src="/images/wallet/phantom.svg" alt="Phantom" width={16} height={16} />
                 {publicKey?.slice(0, 4) + '...' + publicKey?.slice(-4)}
             </div>
         );

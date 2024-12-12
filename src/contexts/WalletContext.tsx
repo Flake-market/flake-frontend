@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
 interface WalletContextType {
-  wallet: any | null;
+  wallet: PhantomProvider | null;
   connected: boolean;
   connecting: boolean;
   publicKey: string | null;
@@ -21,7 +21,7 @@ const WalletContext = createContext<WalletContextType>({
 });
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const [wallet, setWallet] = useState<any | null>(null);
+  const [wallet, setWallet] = useState<PhantomProvider | null>(null);
   const [connected, setConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [publicKey, setPublicKey] = useState<string | null>(null);
@@ -34,7 +34,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setWallet(provider);
         
         // Handle account changes
-        provider.on('accountChanged', (publicKey: any) => {
+        provider.on('accountChanged', (publicKey) => {
           if (publicKey) {
             setPublicKey(publicKey.toString());
           } else {
