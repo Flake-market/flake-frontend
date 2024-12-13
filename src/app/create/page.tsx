@@ -4,30 +4,132 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-// import { useState } from "react"
 import { InfoIcon } from "lucide-react"
 import { useWallet } from "@/contexts/WalletContext"
+import { useState } from "react"
+import { FactoryService, CreateTokenParams } from "@/services/factory";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Create() {
-//   const [selectedToken, setSelectedToken] = useState<string>("")
-  const { connected, connect } = useWallet();
+  const { connected, connect, wallet } = useWallet();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Form state
+  const [formData, setFormData] = useState<CreateTokenParams>({
+    name: "test",
+    ticker: "TEST",
+    description: "test",
+    token_image: "https://example.com/newtoken.png",
+    socials: {
+      twitter: "test",
+      telegram: "test",
+      website: "test.com",
+    },
+    base_price: 2,
+    requests: [{
+      price: 1,
+      description: "test",
+    }]
+  });
 
-  const handleCreateToken = () => {
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSocialChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      socials: {
+        ...prev.socials,
+        [field]: value
+      }
+    }));
+  };
+
+  const handleRequestChange = (index: number, field: string, value: string | number) => {
+    setFormData(prev => ({
+      ...prev,
+      requests: prev.requests.map((request, i) => 
+        i === index ? { ...request, [field]: value } : request
+      )
+    }));
+  };
+
+  const handleCreateToken = async () => {
     if (!connected) {
       connect();
       return;
     }
-    // Handle token creation logic here
-    console.log("Creating token...");
+
+    // Validate required fields
+    if (!formData.name || !formData.ticker) {
+      toast({
+        title: "Error",
+        description: "Name and ticker are required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("formData", formData);
+
+    try {
+      setIsLoading(true);
+      const factoryService = new FactoryService();
+      if (!wallet) {
+        throw new Error("Wallet not connected");
+      }
+      const { pairAddress, signature } = await factoryService.createToken(wallet, formData);
+      if (!signature || !pairAddress) {
+        throw new Error("Transaction failed - no signature or pair address returned");
+      }
+
+      toast({
+        title: "Success!",
+        description: (
+          <>
+            Token created successfully!
+            <br />
+            Pair Address:{" "}
+            <a
+              href={`https://solscan.io/account/${pairAddress}?cluster=devnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lime-500 hover:underline"
+            >
+              {pairAddress.slice(0, 20)}...
+            </a>
+            <br />
+            Signature:{" "}
+            <a 
+              href={`https://solscan.io/tx/${signature}?cluster=devnet`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lime-500 hover:underline"
+            >
+              {signature.slice(0, 20)}...
+            </a>
+          </>
+        ),
+      });
+    } catch (error) {
+      console.error("Error creating token:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error 
+          ? error.message 
+          : "Failed to create token. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,13 +150,25 @@ export default function Create() {
                   <Label htmlFor="name" className="text-sm font-medium">
                     Name
                   </Label>
-                  <Input id="name" placeholder="Your Token Name" className="h-10" />
+                  <Input 
+                    id="name" 
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    placeholder="Your Token Name" 
+                    className="h-10" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="ticker" className="text-sm font-medium">
                     Ticker
                   </Label>
-                  <Input id="ticker" placeholder="e.g. ATN" className="h-10" />
+                  <Input 
+                    id="ticker" 
+                    value={formData.ticker}
+                    onChange={(e) => handleInputChange('ticker', e.target.value)}
+                    placeholder="e.g. ATN" 
+                    className="h-10" 
+                  />
                 </div>
               </div>
               
@@ -64,6 +178,8 @@ export default function Create() {
                 </Label>
                 <Textarea 
                   id="description" 
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
                   placeholder="A short, compelling description of your token..."
                   className="min-h-[120px] resize-none"
                 />
@@ -82,15 +198,33 @@ export default function Create() {
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="twitter" className="text-sm font-medium">Twitter</Label>
-                    <Input id="twitter" placeholder="@handle" className="h-10" />
+                    <Input 
+                      id="twitter" 
+                      value={formData.socials.twitter}
+                      onChange={(e) => handleSocialChange('twitter', e.target.value)}
+                      placeholder="@handle" 
+                      className="h-10" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="telegram" className="text-sm font-medium">Telegram</Label>
-                    <Input id="telegram" placeholder="@handle" className="h-10" />
+                    <Input 
+                      id="telegram" 
+                      value={formData.socials.telegram}
+                      onChange={(e) => handleSocialChange('telegram', e.target.value)}
+                      placeholder="@handle" 
+                      className="h-10" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="website" className="text-sm font-medium">Website</Label>
-                    <Input id="website" placeholder="https://yourwebsite.com" className="h-10" />
+                    <Input 
+                      id="website" 
+                      value={formData.socials.website}
+                      onChange={(e) => handleSocialChange('website', e.target.value)}
+                      placeholder="https://yourwebsite.com" 
+                      className="h-10" 
+                    />
                   </div>
                 </div>
               </div>
@@ -158,11 +292,23 @@ export default function Create() {
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
-                      <Input id="price" placeholder="# tokens (min 1000)" className="h-10" />
+                      <Input 
+                        id="price" 
+                        value={formData.requests[0].price}
+                        onChange={(e) => handleRequestChange(0, 'price', e.target.value)}
+                        placeholder="# tokens (min 1000)" 
+                        className="h-10" 
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="optionDescription" className="text-sm font-medium">Description</Label>
-                      <Input id="optionDescription" placeholder="e.g. sponsored post on X" className="h-10" />
+                      <Input 
+                        id="optionDescription" 
+                        value={formData.requests[0].description}
+                        onChange={(e) => handleRequestChange(0, 'description', e.target.value)}
+                        placeholder="e.g. sponsored post on X" 
+                        className="h-10" 
+                      />
                     </div>
                   </div>
                 </div>
@@ -184,9 +330,9 @@ export default function Create() {
                               ? "bg-lime-500 hover:bg-lime-700 text-white" 
                               : "bg-gray-400 text-gray-100"
                           }`}
-                          disabled={!connected}
+                          disabled={!connected || isLoading}
                         >
-                          Create Token
+                          {isLoading ? "Creating..." : "Create Token"}
                         </Button>
                       </div>
                     </TooltipTrigger>
