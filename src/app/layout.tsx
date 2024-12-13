@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { WalletProvider } from "@/contexts/WalletContext";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "atn.fun",
@@ -21,6 +22,7 @@ export default function RootLayout({
             <Navbar />
             <div className="h-[calc(100vh-66px)]">
               {children}
+              <Toaster />
             </div>
           </div>
         </WalletProvider>
