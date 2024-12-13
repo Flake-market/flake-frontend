@@ -23,8 +23,8 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
     // ============= MOCK DATA =============
     // TODO: get account and balances from wallet
     const account = "0x0000000000000000000000000000000000000000";
-    const solBalance = 100000;
-    const atnBalance = 100000;
+    const solBalance: number = 100000;
+    const atnBalance: number = 100000;
 
     const pairToken = "SOL";
 

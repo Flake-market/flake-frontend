@@ -60,6 +60,7 @@ export class FactoryService {
     );
 
     const program = new Program<Flake>(IDL, provider);
+    // @ts-expect-error/idl-structure-not-recognized
     const factoryAccount = await program.account.factory.fetch(new PublicKey(FACTORY_ADDRESS));
     
     // Generate mint and get associated token account
