@@ -37,7 +37,7 @@ export class FactoryService {
   private connection: Connection;
 
   constructor() {
-    this.connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+    this.connection = new Connection('http://localhost:8899', 'confirmed');
   }
 
   async createToken(phantomProvider: PhantomProvider, params: CreateTokenParams) {
