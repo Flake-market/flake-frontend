@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import {useState, useEffect, useMemo} from "react"
 import Image from "next/image"
 import {
   ColumnDef,
@@ -26,51 +26,30 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { data } from "./Mockdata" // remove once we have actual data
+import { MarketService } from "@/services/marketService"
+import { PairData } from "@/app/markets/types/MarketTypes"
 
-// remove export once we have actual data
-export type Market = {
-  contractAddress: string
-  tokenName: string
-  tokenTicker: string
-  pairToken: string
-  marketCap: number
-  price: number
-  liquidity: number
-  volume: number
-  buys: number
-  sells: number
-  created: number
-  logoUrl: string   
-  socials: {
-    x?: string;
-    telegram?: string;
-    website?: string;
-  };
-  description: string;
-}
-
-export const columns: ColumnDef<Market>[] = [
+export const columns: ColumnDef<PairData>[] = [
   {
     id: "pairInfo",
     header: "PAIR",
     cell: ({ row }) => (
       <div className="flex items-center gap-3">
         <Image
-          src={row.original.logoUrl}
+          src={row.original.tokenImage}
           alt="Token logo"
           width={32}
           height={32}
         />
         <div className="flex flex-col">
-          <span className="font-medium">{row.original.tokenName} ({row.original.tokenTicker}/{row.original.pairToken})</span>
+          <span className="font-medium">{row.original.name} ({row.original.ticker}/SOL)</span>
           <a 
-            href={`https://solscan.io/token/${row.original.contractAddress}`} 
+            href={`https://solscan.io/token/${row.original.pairId}`} 
             target="_blank" 
             rel="noopener noreferrer" 
             className="text-sm text-lime-400 hover:underline"
           >
-            {row.original.contractAddress.slice(0, 10)}...
+            {row.original.pairKey.slice(0, 10)}...
           </a>
         </div>
       </div>
@@ -78,9 +57,9 @@ export const columns: ColumnDef<Market>[] = [
     enableColumnFilter: true,
     filterFn: (row, id, value) => {
       return (
-        row.original.tokenName.toLowerCase().includes(value.toLowerCase()) ||
-        row.original.tokenTicker.toLowerCase().includes(value.toLowerCase()) ||
-        row.original.contractAddress.toLowerCase().includes(value.toLowerCase())
+        row.original.name.toLowerCase().includes(value.toLowerCase()) ||
+        row.original.ticker.toLowerCase().includes(value.toLowerCase()) ||
+        row.original.pairKey.toLowerCase().includes(value.toLowerCase())
       )
     },
   },
@@ -178,7 +157,7 @@ export const columns: ColumnDef<Market>[] = [
       </Button>
     ),
     cell: ({ row }) => {
-      const date = new Date(row.original.created * 1000);
+      const date = new Date(row.original.createdAt);
       return <div className="w-[120px]">{date.toLocaleDateString()}</div>;
     },
   },
@@ -203,8 +182,25 @@ export const columns: ColumnDef<Market>[] = [
 
 export function MarketTable() {
   const router = useRouter()
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const marketService = useMemo(() => new MarketService(), [])
+  const [data, setData] = useState<PairData[]>([])
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const marketData = await marketService.fetchMarketData();
+        setData(marketData.pairs)
+        console.log('Fetched market data:', marketData);
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+      }
+    };
+    fetchData();
+  }, [marketService]);
+
 
   const table = useReactTable({
     data,
@@ -263,7 +259,7 @@ export function MarketTable() {
                 <TableRow
                   key={row.id}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/pair/${row.original.contractAddress}`)}
+                  onClick={() => router.push(`/pair/${row.original.pairKey}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

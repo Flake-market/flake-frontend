@@ -3,7 +3,7 @@ import { Idl } from '@coral-xyz/anchor';
 export type Flake = Idl;
 
 export const IDL: Flake = {
-    "address": "5cYJsEQDUHGQuZ3SuSRjAN14g23iXtWboqoFJ6fJHtYM",
+    "address": "3TSDjEyy4Hu3MejRUb4AMBrEQ8nRUtAXPw5Rr3Jkn1NM",
     "metadata": {
       "name": "flake",
       "version": "0.1.0",
@@ -507,5 +507,5 @@ export const IDL: Flake = {
           ]
         }
       }
-  ]
-} as const;
+    ]
+  } as const;

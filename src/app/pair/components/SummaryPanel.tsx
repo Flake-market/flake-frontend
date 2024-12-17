@@ -16,16 +16,16 @@ interface SummaryPanelProps {
     telegram?: string;
     website?: string;
   };
-  contractAddress: string;
+  pairKey: string;
 }
 
-export default function SummaryPanel({ tokenName, description, socials, contractAddress }: SummaryPanelProps) {
+export default function SummaryPanel({ tokenName, description, socials, pairKey }: SummaryPanelProps) {
   const router = useRouter();
   const [showFullDescription, setShowFullDescription] = useState(false);
   const { connected } = useWallet();
 
   const handleRequestClick = () => {
-    router.push(`/pair/${contractAddress}/request`);
+    router.push(`/pair/${pairKey}/request`);
   };
 
   return (

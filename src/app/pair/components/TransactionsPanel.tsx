@@ -17,13 +17,13 @@ import { Transaction, transactionData } from "@/app/markets/components/Mockdata"
 
 
 interface TransactionsPanelProps {
-  contractAddress: string;
+  pairKey: string;
 }
 
-export default function TransactionsPanel({ contractAddress }: TransactionsPanelProps) {
-    // Filter transactions for this contract address
+export default function TransactionsPanel({ pairKey }: TransactionsPanelProps) {
+    // Filter transactions for this pairKey
     const transactions: Transaction[] = transactionData.filter(
-        tx => tx.contractAddress === contractAddress
+        tx => tx.contractAddress === pairKey
     )
 
     return (
