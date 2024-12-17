@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useParams } from 'next/navigation'
 import { ExternalLink } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -50,7 +50,7 @@ export default function RequestPage() {
 
   
   const params = useParams();
-  const marketService = new MarketService()
+  const marketService = useMemo(() => new MarketService(), [])
 
   useEffect(() => {
     // Fetch pair data based on address
@@ -64,7 +64,7 @@ export default function RequestPage() {
     // Fetch requests data - replace with actual data fetching
     setRequests(mockRequests);
 
-  }, [params.address]);
+  }, [params.address, marketService]);
 
   if (!pairData) return <div>Pair not found</div>;
 

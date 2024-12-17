@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useParams } from 'next/navigation'
 import HeaderPanel from "../components/HeaderPanel"
 import SummaryPanel from "../components/SummaryPanel"
@@ -14,7 +14,7 @@ import { MarketService } from "@/services/marketService"
 export default function PairPage() {
   const [pairData, setPairData] = useState<PairData | null>(null)
   const params = useParams()
-  const marketService = new MarketService()
+  const marketService = useMemo(() => new MarketService(), [])
 
   useEffect(() => {
     // Simulate API call with mock data
@@ -24,7 +24,7 @@ export default function PairPage() {
     }
 
     fetchPairData()
-  }, [params.address])
+  }, [params.address, marketService])
 
   if (!pairData) return <div>Pair not found</div>
 

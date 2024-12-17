@@ -1,6 +1,6 @@
 "use client"
 
-import {useState, useEffect} from "react"
+import {useState, useEffect, useMemo} from "react"
 import Image from "next/image"
 import {
   ColumnDef,
@@ -184,7 +184,7 @@ export function MarketTable() {
   const router = useRouter()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const marketService = new MarketService()
+  const marketService = useMemo(() => new MarketService(), [])
   const [data, setData] = useState<PairData[]>([])
 
 
@@ -199,7 +199,7 @@ export function MarketTable() {
       }
     };
     fetchData();
-  }, []);
+  }, [marketService]);
 
 
   const table = useReactTable({
