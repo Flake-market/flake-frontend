@@ -1,4 +1,4 @@
-import { MarketResponse, PairData } from '../types/MarketTypes';
+import { MarketResponse, PairData } from '../app/markets/types/MarketTypes';
 import fetch from 'node-fetch';
 
 export class MarketService {
@@ -22,9 +22,9 @@ export class MarketService {
         return data.pairs;
     }
 
-    async getPairById(pairId: string): Promise<PairData | undefined> {
+    async getPairByKey(pairKey: string): Promise<PairData | undefined> {
         const data = await this.fetchMarketData();
-        return data.pairs.find(pair => pair.pairId === pairId);
+        return data.pairs.find(pair => pair.pairKey === pairKey);
     }
 
     // Get all unique creators

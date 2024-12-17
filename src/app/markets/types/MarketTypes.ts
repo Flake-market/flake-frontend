@@ -17,6 +17,12 @@ export interface PairData {
     telegram: string;
     website: string;
     requests: PriceRequest[];
+    price: number;
+    buys: number;
+    sells: number;
+    liquidity: number;
+    marketCap: number;
+    volume: number;
 }
 
 export interface MarketResponse {
