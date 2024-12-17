@@ -12,7 +12,7 @@ import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui
 import { Tooltip } from "@/components/ui/tooltip";
 import { useWallet } from "@/contexts/WalletContext";
 
-export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: string, logoUrl: string }) {
+export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: string, tokenImage: string }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
     const [output, setOutput] = useState<string>("");
@@ -132,7 +132,7 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
                 </div>
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? "/images/tokens/solana.svg" : logoUrl} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} />
+                        <Image src={isBuy ? "/images/tokens/solana.svg" : tokenImage} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} />
                     </div>
                     <Input
                         type="text"
@@ -150,7 +150,7 @@ export default function ActionPanel({ tokenTicker, logoUrl }: { tokenTicker: str
             <div className="flex flex-col mb-6 mx-4 mt-2">
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? logoUrl : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} />
+                        <Image src={isBuy ? tokenImage : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} />
                     </div>
                     <Input
                         type="text"

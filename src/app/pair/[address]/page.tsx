@@ -7,18 +7,20 @@ import SummaryPanel from "../components/SummaryPanel"
 import TransactionsPanel from "../components/TransactionsPanel"
 import ActionPanel from "../components/ActionPanel"
 import ChartPanel from "../components/ChartPanel"
-import { data } from "@/app/markets/components/Mockdata"
-import { Market } from "@/app/markets/components/MarketTable"
+// import { data } from "@/app/markets/components/Mockdata"
+import { PairData } from "@/app/markets/types/MarketTypes"
+import { MarketService } from "@/services/marketService"
 
 export default function PairPage() {
-  const [pairData, setPairData] = useState<Market | null>(null)
+  const [pairData, setPairData] = useState<PairData | null>(null)
   const params = useParams()
+  const marketService = new MarketService()
 
   useEffect(() => {
     // Simulate API call with mock data
-    const fetchPairData = () => {
-      const pair = data.find(item => item.contractAddress === params.address)
-      setPairData(pair || null)
+    const fetchPairData = async () => {
+        const pair = await marketService.getPairByKey(params.address as string)
+        setPairData(pair || null)
     }
 
     fetchPairData()
@@ -31,38 +33,37 @@ export default function PairPage() {
         <div className="grid grid-rows-[68px,1fr,240px]">
             <section>
                 <HeaderPanel 
-                    contractAddress={pairData.contractAddress}
-                    tokenTicker={pairData.tokenTicker}
-                    pairToken={pairData.pairToken}
+                    contractAddress={pairData.pairKey}
+                    tokenTicker={pairData.ticker}
                     price={pairData.price}
-                    logoUrl={pairData.logoUrl}
+                    tokenImage={pairData.tokenImage}
                 />
             </section>
             <section className="overflow-hidden border-y ">
                 <ChartPanel />
             </section>
             <section>
-                <TransactionsPanel contractAddress={pairData.contractAddress} />
+                <TransactionsPanel pairKey={pairData.pairKey} />
             </section>
         </div>
         
         <div className="overflow-y-auto border-l">
             <section className="h-[250px] border-b">
                 <SummaryPanel
-                    tokenName={pairData.tokenName}
+                    tokenName={pairData.name}
                     description={pairData.description}
-                    contractAddress={pairData.contractAddress}
+                    pairKey={pairData.pairKey}
                     socials={{
-                        x: pairData.socials?.x,
-                        telegram: pairData.socials?.telegram,
-                        website: pairData.socials?.website
+                        x: pairData.twitter,
+                        telegram: pairData.telegram,
+                        website: pairData.website
                     }}
                 />
             </section>
             <section>
                 <ActionPanel 
-                    tokenTicker={pairData.tokenTicker}
-                    logoUrl={pairData.logoUrl}
+                    tokenTicker={pairData.ticker}
+                    tokenImage={pairData.tokenImage}
                 />
             </section>
         </div>

@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react"
 import { useParams } from 'next/navigation'
 import { ExternalLink } from "lucide-react";
-import { Market } from "@/app/markets/components/MarketTable";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -16,9 +15,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { RequireWallet } from "@/components/auth/RequireWallet"
+import { PairData } from "@/app/markets/types/MarketTypes"
+import { MarketService } from "@/services/marketService"
 
-// TODO: Remove mock data
-import { data as mockData } from "@/app/markets/components/Mockdata";
 
 // Mock data for requests (replace with actual data fetching)
 interface Request {
@@ -44,18 +43,20 @@ const mockRequests: Request[] = [
 ];
 
 export default function RequestPage() {
-  const [pairData, setPairData] = useState<Market | null>(null);
+  const [pairData, setPairData] = useState<PairData | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "completed">("all");
   const [open, setOpen] = useState(false);
 
+  
   const params = useParams();
+  const marketService = new MarketService()
 
   useEffect(() => {
     // Fetch pair data based on address
-    const fetchPairData = () => {
-      const pair = mockData.find(item => item.contractAddress === params.address);
-      setPairData(pair || null) ;
+    const fetchPairData = async () => {
+      const pair = await marketService.getPairByKey(params.address as string)
+        setPairData(pair || null)
     };
 
     fetchPairData();
@@ -81,17 +82,17 @@ export default function RequestPage() {
           {/* Left Side */}
           <div className="mb-8 w-1/2">
             <h1 className="text-2xl mb-4 flex items-center gap-2">
-              {pairData.tokenName}
+              {pairData.name}
             </h1>
             <div className="flex flex-col gap-2">
               {/* Contract Address with link to Solscan */}
               <a
-                href={`https://solscan.io/address/${pairData.contractAddress}`}
+                href={`https://solscan.io/address/${pairData.pairKey}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-lime-500 hover:underline"
               >
-                {pairData.contractAddress}
+                {pairData.pairKey}
                 <ExternalLink className="ml-1 h-4 w-4" />
               </a>
               {/* Description from mockData */}
@@ -120,7 +121,7 @@ export default function RequestPage() {
                   className="w-full h-40"
                 />
                 <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4">
-                  1000 {pairData.tokenTicker}
+                  1000 {pairData.ticker}
                 </button>
               </DialogContent>
             </Dialog>

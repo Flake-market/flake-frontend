@@ -6,20 +6,19 @@ import { Copy } from "lucide-react"
 interface HeaderPanelProps {
   contractAddress: string;
   tokenTicker: string;
-  pairToken: string;
   price: number;
-  logoUrl: string;
+  tokenImage: string;
 }
 
-export default function HeaderPanel({ contractAddress, tokenTicker, pairToken, price, logoUrl }: HeaderPanelProps) {
+export default function HeaderPanel({ contractAddress, tokenTicker, price, tokenImage }: HeaderPanelProps) {
   return (
     <div className="flex items-center h-full mx-2 px-4 space-x-4">
-      <Image src={logoUrl} alt={`${tokenTicker} logo`} width={32} height={32} />
+      <Image src={tokenImage} alt={`${tokenTicker} logo`} width={32} height={32} />
       <div className="flex items-center space-x-4">
-        <span className="text-md font-semibold">{`${tokenTicker}/${pairToken}`}</span>
+        <span className="text-md font-semibold">{`${tokenTicker}/SOL`}</span>
         <Separator orientation="vertical" className="h-5 w-px bg-muted-foreground" />
         <div className="flex flex-col">
-          <span className={`text-sm ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>{`${price} ${pairToken} ($${(250 * price).toFixed(2)})`}</span>
+          <span className={`text-sm ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>{`${price} SOL ($${(250 * price).toFixed(2)})`}</span>
           <span className={`text-xs ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>24h: {2.5 > 0 ? '+' : ''}{2.5}%</span>
         </div>
         <Separator orientation="vertical" className="h-5 w-px bg-muted-foreground/50" />
