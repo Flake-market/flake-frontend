@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import {useState, useEffect} from "react"
 import Image from "next/image"
 import {
   ColumnDef,
@@ -25,6 +25,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
+import { MarketService } from "@/services/marketService"
 
 import { data } from "./Mockdata" // remove once we have actual data
 
@@ -203,8 +205,23 @@ export const columns: ColumnDef<Market>[] = [
 
 export function MarketTable() {
   const router = useRouter()
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const marketService = new MarketService()
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const marketData = await marketService.fetchMarketData();
+        console.log('Fetched market data:', marketData);
+      } catch (error) {
+        console.error('Error fetching market data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   const table = useReactTable({
     data,
