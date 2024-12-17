@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { InfoIcon } from "lucide-react"
 import { useWallet } from "@/contexts/WalletContext"
-import { useState } from "react"
+import { useState, ChangeEvent } from "react"
 import { FactoryService, CreateTokenParams } from "@/services/factory";
 import { useToast } from "@/hooks/use-toast";
 
@@ -19,21 +19,25 @@ export default function Create() {
   
   // Form state
   const [formData, setFormData] = useState<CreateTokenParams>({
-    name: "test",
-    ticker: "TEST",
-    description: "test",
-    token_image: "https://example.com/newtoken.png",
+    name: "Isha",
+    ticker: "ISHA",
+    description: "A decentralized token for the community",
+    token_image: "",
     socials: {
-      twitter: "test",
-      telegram: "test",
-      website: "test.com",
+      twitter: "@ishatoken",
+      telegram: "@ishaofficial", 
+      website: "ishatoken.xyz",
     },
-    base_price: 2,
+    base_price: 1_000_000,
     requests: [{
-      price: 1,
-      description: "test",
+      price: 1000,
+      description: "sponsored post on X",
     }]
   });
+
+  // New state for the selected image file and uploaded image URL
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -61,6 +65,45 @@ export default function Create() {
     }));
   };
 
+  // Handler for file input change
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
+  // Function to upload image to Pinata via API route
+  const uploadImageToPinata = async () => {
+    if (!selectedImage) return null;
+
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+
+    try {
+      const response = await fetch("/api/pinata", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      console.log("data", data)
+      setUploadedImageUrl(`https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`);
+      return data.IpfsHash;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Image upload failed",
+        variant: "destructive",
+      });
+      return null;
+    }
+  };
+
   const handleCreateToken = async () => {
     if (!connected) {
       connect();
@@ -77,7 +120,18 @@ export default function Create() {
       return;
     }
 
-    console.log("formData", formData);
+    // Upload image to Pinata
+    const cid = await uploadImageToPinata();
+    if (!cid) {
+      // Image upload failed; stop token creation
+      return;
+    }
+
+    // Update formData with the uploaded image URL
+    const updatedFormData = {
+      ...formData,
+      token_image: `https://gateway.pinata.cloud/ipfs/${cid}`,
+    };
 
     try {
       setIsLoading(true);
@@ -85,7 +139,7 @@ export default function Create() {
       if (!wallet) {
         throw new Error("Wallet not connected");
       }
-      const { pairAddress, signature } = await factoryService.createToken(wallet, formData);
+      const { pairAddress, signature } = await factoryService.createToken(wallet, updatedFormData);
       if (!signature || !pairAddress) {
         throw new Error("Transaction failed - no signature or pair address returned");
       }
@@ -187,10 +241,22 @@ export default function Create() {
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Token Image</Label>
-                <label className="mt-3 flex items-center justify-center border border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-500 transition-colors cursor-pointer text-sm text-muted-foreground">
-                  <input type="file" accept="image/*" className="hidden" />
-                  Upload Image
+                <label
+                  htmlFor="tokenImage"
+                  className="mt-3 flex items-center justify-center border border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-500 transition-colors cursor-pointer text-sm text-muted-foreground"
+                >
+                  <input
+                    id="tokenImage"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  {selectedImage ? selectedImage.name : "Upload Image"}
                 </label>
+                {uploadedImageUrl && (
+                  <img src={uploadedImageUrl} alt="Uploaded Token" className="mt-4 w-32 h-32 object-cover" />
+                )}
               </div>
 
               <div className="pt-8 border-t border-gray-200 space-y-6">

@@ -3,7 +3,7 @@ import { MarketResponse } from '@/types/MarketTypes';
 
 export async function GET() {
     try {
-        const response = await fetch('http://localhost:3000/api/markets');
+        const response = await fetch('http://localhost:3003/api/markets');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

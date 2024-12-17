@@ -40,6 +40,7 @@ export const columns: ColumnDef<PairData>[] = [
           alt="Token logo"
           width={32}
           height={32}
+          className="rounded-full"
         />
         <div className="flex flex-col">
           <span className="font-medium">{row.original.name} ({row.original.ticker}/SOL)</span>
