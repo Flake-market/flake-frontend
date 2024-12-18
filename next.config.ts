@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  transpilePackages: [
+    '@coral-xyz/anchor',
+    '@solana/web3.js',
+    '@solana/spl-token'
+  ],
   images: {
     remotePatterns: [
       {

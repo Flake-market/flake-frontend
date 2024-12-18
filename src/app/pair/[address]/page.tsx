@@ -64,6 +64,10 @@ export default function PairPage() {
                 <ActionPanel 
                     tokenTicker={pairData.ticker}
                     tokenImage={pairData.tokenImage}
+                    pairAddress={pairData.pairKey}
+                    attentionToken={pairData.attentionToken}
+                    creatorPublicKey={pairData.creator}
+                    basePrice={Number(pairData.basePrice)}
                 />
             </section>
         </div>
