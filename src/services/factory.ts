@@ -3,6 +3,7 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction, // TODO: remove this when we have a way to check if the account exists
 } from '@solana/spl-token';
 import { Connection, PublicKey, Keypair, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { FACTORY_ADDRESS } from '@/config/contracts';
@@ -110,6 +111,7 @@ export class FactoryService {
         .createPair(createPairData)
         .accounts({
           factory: new PublicKey(FACTORY_ADDRESS),
+          pair: pairAddress,
           attentionTokenMint: mintKeypair.publicKey,
           creatorTokenAccount: creatorTokenAccount,
           creator: walletAdapter.publicKey,
@@ -128,6 +130,75 @@ export class FactoryService {
       };
     } catch (error) {
       console.error('Error creating token:', error);
+      throw error;
+    }
+  }
+
+  async swap(
+    phantomProvider: PhantomProvider,
+    amountIn: number,
+    minimumAmountOut: number,
+    isBuy: boolean,
+    pairAddress: PublicKey,
+    attentionTokenMint: PublicKey,
+    userTokenAccount: PublicKey,
+    creator: PublicKey,
+    factoryAddress: PublicKey,
+  ) {
+    if (!phantomProvider) throw new Error('Wallet not connected');
+
+    const walletAdapter: PhantomWalletAdapter = {
+      publicKey: new PublicKey(phantomProvider.publicKey.toString()),
+      signTransaction: async <T extends Transaction | VersionedTransaction>(tx: T): Promise<T> => {
+        return await phantomProvider.signTransaction(tx as Transaction) as T;
+      },
+      signAllTransactions: async <T extends Transaction | VersionedTransaction>(txs: T[]): Promise<T[]> => {
+        return await phantomProvider.signAllTransactions(txs as Transaction[]) as T[];
+      }
+    };
+
+    const provider = new AnchorProvider(
+      this.connection, 
+      walletAdapter,
+      { commitment: 'confirmed' }
+    );
+
+    const program = new Program<Flake>(IDL, provider);
+    
+    try {
+      // Create associated token account if it doesn't exist - TODO: remove this when we have a way to check if the account exists
+      const createAtaIx = await createAssociatedTokenAccountInstruction(
+        walletAdapter.publicKey,  // payer
+        userTokenAccount,         // ata
+        walletAdapter.publicKey,  // owner
+        attentionTokenMint       // mint
+      );
+
+      // Check if the token account exists - TODO: remove this when we have a way to check if the account exists
+      const tokenAccountInfo = await this.connection.getAccountInfo(userTokenAccount);
+      const preInstructions = !tokenAccountInfo ? [createAtaIx] : [];
+
+      const signature = await program.methods
+        .swap(new BN(amountIn), new BN(minimumAmountOut), isBuy)
+        .accounts({
+          pair: pairAddress,
+          attentionTokenMint: attentionTokenMint,
+          userTokenAccount: userTokenAccount,
+          user: walletAdapter.publicKey,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID, // TODO: remove this when we have a way to check if the account exists
+          systemProgram: SystemProgram.programId,
+          creator: creator,
+          factory: factoryAddress,
+        })
+        .preInstructions(preInstructions) // TODO: remove this when we have a way to check if the account exists
+        .rpc();
+
+      return {
+        signature: signature
+      };
+    } catch (error) {
+      console.error('Error during swap:', error);
       throw error;
     }
   }
