@@ -6,19 +6,44 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { sanitizeInput, calculateSol } from "@/lib/utils";
+import { sanitizeInput, calculateSol, calculateInput, calculateOutput } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useWallet } from "@/contexts/WalletContext";
+import { FactoryService } from "@/services/factory";
+import { PublicKey } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useToast } from "@/hooks/use-toast";
+import { getAssociatedTokenAddress } from "@solana/spl-token";
+import { FACTORY_ADDRESS } from "@/config/contracts";
 
-export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: string, tokenImage: string }) {
+export default function ActionPanel({ 
+    tokenTicker, 
+    tokenImage,
+    pairAddress,
+    attentionToken,
+    creatorPublicKey,
+    basePrice,
+}: { 
+    tokenTicker: string, 
+    tokenImage: string,
+    pairAddress: string,
+    attentionToken: string,
+    creatorPublicKey: string,
+    basePrice: number,
+}) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
     const [output, setOutput] = useState<string>("");
-    const [amount, setAmount] = useState<number>(0);
-    const { connected } = useWallet();
 
+    // to change when formula is finalized
+    const [amount, setAmount] = useState<number>(0);
+    const [amountOut, setAmountOut] = useState<number>(0);
+
+    const { connected, wallet } = useWallet();
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
     
     // ============= MOCK DATA =============
     // TODO: get account and balances from wallet
@@ -28,11 +53,9 @@ export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: 
 
     const pairToken = "SOL";
 
-    const minPrice = 0.0004;
-    const maxPrice = 0.1;
-    const maxSupply = 1000000;
-    const currentSupply = 500000;
-    const spread = 0.01;
+    // const maxSupply = 1000000;
+    // const currentSupply = 500000;
+    // const spread = 0.01;
 
     // ===================================
 
@@ -59,23 +82,28 @@ export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: 
         setInput(sanitizedValue);
         if (isBuy) {
             /// @TODO: Need to determine formula for buy
-            const atnAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            // const atnAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            const atnAmount = calculateOutput(Number(sanitizedValue), basePrice);
             if (atnAmount === 0) {
                 setOutput("");
                 setAmount(0);
+                setAmountOut(0);
             } else {
                 setOutput(atnAmount.toString());
-                setAmount(atnAmount);
+                setAmount(Number(sanitizedValue) * LAMPORTS_PER_SOL);
+                setAmountOut(atnAmount * LAMPORTS_PER_SOL);
             }
         } else {
-            const solAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            // const solAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            const solAmount = calculateInput(Number(sanitizedValue), basePrice);
             if (solAmount === 0) {
                 setOutput("");
                 setAmount(0);
+                setAmountOut(0);
             } else {
                 setOutput(solAmount.toString());
-                setAmount(Number(sanitizedValue));
-                console.log(amount);
+                setAmount(Number(sanitizedValue) * LAMPORTS_PER_SOL);
+                setAmountOut(solAmount * LAMPORTS_PER_SOL);
             }
         }
     };
@@ -84,24 +112,101 @@ export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: 
         const sanitizedValue = sanitizeInput(e.target.value);
         setOutput(sanitizedValue);
         if (isBuy) {
-            const solAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            // const solAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            const solAmount = calculateInput(Number(sanitizedValue), basePrice);
             if (solAmount === 0) {
                 setInput("");
                 setAmount(0);
+                setAmountOut(0);
             } else {
                 setInput(solAmount.toString());
-                setAmount(Number(sanitizedValue));
+                setAmount(solAmount * LAMPORTS_PER_SOL);
+                setAmountOut(Number(sanitizedValue) * LAMPORTS_PER_SOL);
             }
         } else {
             // @TODO: Need to determine formula for sell if sol is used as an input
-            const atnAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            // const atnAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
+            const atnAmount = calculateInput(Number(sanitizedValue), basePrice);
             if (atnAmount === 0) {
                 setInput("");
                 setAmount(0);
+                setAmountOut(0);
             } else {
                 setInput(atnAmount.toString());
-                setAmount(atnAmount);
+                setAmount(atnAmount * LAMPORTS_PER_SOL);
+                setAmountOut(Number(sanitizedValue) * LAMPORTS_PER_SOL);
             }
+        }
+    };
+
+    const handleSwap = async () => {
+        if (!connected || !wallet) {
+            toast({
+                title: "Error",
+                description: "Please connect your wallet to continue",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const factoryService = new FactoryService();
+            const amountIn = Number(input);
+            const minimumAmountOut = Number(output);
+
+            // Get user's token account
+            const userTokenAccount = await getAssociatedTokenAddress(
+                new PublicKey(attentionToken),
+                new PublicKey(wallet.publicKey.toString())
+            );
+
+            const { signature } = await factoryService.swap(
+                wallet,
+                amountIn * LAMPORTS_PER_SOL,
+                minimumAmountOut * LAMPORTS_PER_SOL,
+                isBuy,
+                new PublicKey(pairAddress),
+                new PublicKey(attentionToken),
+                userTokenAccount,
+                new PublicKey(creatorPublicKey),
+                new PublicKey(FACTORY_ADDRESS)
+            );
+
+            toast({
+                title: "Success!",
+                description: (
+                    <>
+                        Transaction successful!
+                        <br />
+                        <a 
+                            href={`https://solscan.io/tx/${signature}?cluster=devnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-lime-500 hover:underline"
+                        >
+                            View transaction
+                        </a>
+                    </>
+                ),
+            });
+
+            // Reset form
+            setInput("");
+            setOutput("");
+            setAmount(0);
+
+        } catch (error) {
+            console.error('Swap failed:', error);
+            toast({
+                title: "Error",
+                description: error instanceof Error 
+                    ? error.message 
+                    : "Failed to complete swap. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -119,7 +224,7 @@ export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: 
             </Tabs>
             <div className="flex flex-col mt-4 mx-4 mb-2">
                 <div className="flex justify-between items-center m-2 text-muted-foreground">
-                    <Label className="text-sm">Amount ({isBuy ? pairToken : tokenTicker})</Label>
+                    <Label className="text-sm">Amount ({isBuy ? 'SOL' : tokenTicker})</Label>
                     <Button
                         variant="link"
                         size="sm"
@@ -172,9 +277,10 @@ export default function ActionPanel({ tokenTicker, tokenImage }: { tokenTicker: 
                                     ? "bg-lime-500 hover:bg-lime-700 text-white" 
                                     : "bg-gray-400 text-gray-100"
                                 }`}
-                                disabled={!connected}
+                                disabled={!connected || isLoading || amount === 0 || amountOut === 0} 
+                                onClick={handleSwap}
                             >
-                                {isBuy ? "Buy" : "Sell"}
+                                {isLoading ? "Processing..." : (isBuy ? "Buy" : "Sell")}
                             </Button>
                         </div>
                     </TooltipTrigger>

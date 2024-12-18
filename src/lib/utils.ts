@@ -45,3 +45,12 @@ export function calculateSol(
   }
 }
 
+// Placeholder
+export function calculateOutput(amountIn: number, basePrice: number): number {
+  return amountIn / basePrice;
+}
+
+// Calculate input amount needed for desired output
+export function calculateInput(amountOut: number, basePrice: number): number {
+  return amountOut * basePrice;
+}

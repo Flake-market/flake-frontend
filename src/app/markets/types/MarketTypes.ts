@@ -7,6 +7,7 @@ export interface PairData {
     pairId: string;
     pairKey: string;
     creator: string;
+    attentionToken: string;
     basePrice: string;
     createdAt: string;
     name: string;
