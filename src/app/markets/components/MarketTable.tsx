@@ -28,6 +28,7 @@ import {
 
 import { MarketService } from "@/services/marketService"
 import { PairData } from "@/app/markets/types/MarketTypes"
+import { formatLamports } from "@/lib/utils"
 
 export const columns: ColumnDef<PairData>[] = [
   {
@@ -83,8 +84,8 @@ export const columns: ColumnDef<PairData>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-col w-[140px]">
-        <span>${row.original.marketCap.toLocaleString()}</span>
-        <span className="text-sm text-muted-foreground">${row.original.price.toFixed(2)}</span>
+        <span>${formatLamports(row.original.marketCap)}</span>
+        <span className="text-sm text-muted-foreground">{formatLamports(row.original.price)} SOL</span>
       </div>
     ),
   },
@@ -105,7 +106,7 @@ export const columns: ColumnDef<PairData>[] = [
         />
       </Button>
     ),
-    cell: ({ row }) => <div className="w-[140px]">${row.original.liquidity.toLocaleString()}</div>,
+    cell: ({ row }) => <div className="w-[140px]">${formatLamports(row.original.supply)}</div>,
   },
   {
     accessorKey: "volume",

@@ -21,7 +21,7 @@ export interface PairData {
     price: number;
     buys: number;
     sells: number;
-    liquidity: number;
+    supply: number;
     marketCap: number;
     volume: number;
 }

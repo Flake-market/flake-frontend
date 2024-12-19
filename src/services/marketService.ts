@@ -33,10 +33,10 @@ export class MarketService {
     // }
 
     // Get all pairs with price above certain threshold
-    async getPairsAbovePrice(priceThreshold: string): Promise<PairData[]> {
-        const data = await this.fetchMarketData();
-        return data.pairs.filter(pair => 
-            BigInt(pair.basePrice) > BigInt(priceThreshold)
-        );
-    }
+    // async getPairsAbovePrice(priceThreshold: string): Promise<PairData[]> {
+    //     const data = await this.fetchMarketData();
+    //     return data.pairs.filter(pair => 
+    //         BigInt(pair.basePrice) > BigInt(priceThreshold)
+    //     );
+    // }
 }
