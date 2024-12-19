@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { sanitizeInput, calculateSol, calculateInput, calculateOutput } from "@/lib/utils";
+import { sanitizeInput, exactSolToTokens, exactTokensToSol, tokensToExactSol, solToExactTokens, parseLamports } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -24,14 +24,14 @@ export default function ActionPanel({
     pairAddress,
     attentionToken,
     creatorPublicKey,
-    basePrice,
+    currentSupply
 }: { 
     tokenTicker: string, 
     tokenImage: string,
     pairAddress: string,
     attentionToken: string,
     creatorPublicKey: string,
-    basePrice: number,
+    currentSupply: number
 }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
@@ -50,12 +50,9 @@ export default function ActionPanel({
     const account = "0x0000000000000000000000000000000000000000";
     const solBalance: number = 100000;
     const atnBalance: number = 100000;
+    const slippage: number = 0.05;
 
     const pairToken = "SOL";
-
-    // const maxSupply = 1000000;
-    // const currentSupply = 500000;
-    // const spread = 0.01;
 
     // ===================================
 
@@ -83,27 +80,27 @@ export default function ActionPanel({
         if (isBuy) {
             /// @TODO: Need to determine formula for buy
             // const atnAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
-            const atnAmount = calculateOutput(Number(sanitizedValue), basePrice);
+            const atnAmount = exactSolToTokens(Number(currentSupply), Number(sanitizedValue));
             if (atnAmount === 0) {
                 setOutput("");
                 setAmount(0);
                 setAmountOut(0);
             } else {
-                setOutput(atnAmount.toString());
-                setAmount(Number(sanitizedValue) * LAMPORTS_PER_SOL);
-                setAmountOut(atnAmount * LAMPORTS_PER_SOL);
+                setOutput((atnAmount * (1 - slippage)).toString());
+                setAmount(parseLamports(Number(sanitizedValue)));
+                setAmountOut(parseLamports(atnAmount * (1 - slippage)));
             }
         } else {
             // const solAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
-            const solAmount = calculateInput(Number(sanitizedValue), basePrice);
+            const solAmount = exactTokensToSol(currentSupply, Number(sanitizedValue));
             if (solAmount === 0) {
                 setOutput("");
                 setAmount(0);
                 setAmountOut(0);
             } else {
-                setOutput(solAmount.toString());
-                setAmount(Number(sanitizedValue) * LAMPORTS_PER_SOL);
-                setAmountOut(solAmount * LAMPORTS_PER_SOL);
+                setOutput((solAmount * (1 - slippage)).toString());
+                setAmount(parseLamports(Number(sanitizedValue)));
+                setAmountOut(parseLamports(solAmount * (1 - slippage)));
             }
         }
     };
@@ -113,28 +110,28 @@ export default function ActionPanel({
         setOutput(sanitizedValue);
         if (isBuy) {
             // const solAmount = calculateSol(currentSupply, Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
-            const solAmount = calculateInput(Number(sanitizedValue), basePrice);
+            const solAmount = solToExactTokens(currentSupply, Number(sanitizedValue));
             if (solAmount === 0) {
                 setInput("");
                 setAmount(0);
                 setAmountOut(0);
             } else {
-                setInput(solAmount.toString());
-                setAmount(solAmount * LAMPORTS_PER_SOL);
-                setAmountOut(Number(sanitizedValue) * LAMPORTS_PER_SOL);
+                setInput((solAmount * (1 + slippage)).toString());
+                setAmount(parseLamports(solAmount * (1 + slippage)));
+                setAmountOut(parseLamports(Number(sanitizedValue)));
             }
         } else {
             // @TODO: Need to determine formula for sell if sol is used as an input
             // const atnAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
-            const atnAmount = calculateInput(Number(sanitizedValue), basePrice);
+            const atnAmount = tokensToExactSol(currentSupply, Number(sanitizedValue));
             if (atnAmount === 0) {
                 setInput("");
                 setAmount(0);
                 setAmountOut(0);
             } else {
-                setInput(atnAmount.toString());
-                setAmount(atnAmount * LAMPORTS_PER_SOL);
-                setAmountOut(Number(sanitizedValue) * LAMPORTS_PER_SOL);
+                setInput((atnAmount * (1 + slippage)).toString());
+                setAmount(parseLamports(atnAmount * (1 + slippage)));
+                setAmountOut(parseLamports(Number(sanitizedValue)));
             }
         }
     };
@@ -237,7 +234,7 @@ export default function ActionPanel({
                 </div>
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? "/images/tokens/solana.svg" : tokenImage} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} />
+                        <Image src={isBuy ? "/images/tokens/solana.svg" : tokenImage} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} className={!isBuy ? "rounded-full" : ""} />
                     </div>
                     <Input
                         type="text"
@@ -255,7 +252,7 @@ export default function ActionPanel({
             <div className="flex flex-col mb-6 mx-4 mt-2">
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? tokenImage : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} />
+                        <Image src={isBuy ? tokenImage : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} className={isBuy ? "rounded-full" : ""} />
                     </div>
                     <Input
                         type="text"

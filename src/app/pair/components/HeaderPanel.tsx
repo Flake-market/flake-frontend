@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import { Separator } from "@/components/ui/separator"
 import { Copy } from "lucide-react"
+import { formatLamports } from "@/lib/utils";
 
 interface HeaderPanelProps {
   contractAddress: string;
@@ -13,13 +14,16 @@ interface HeaderPanelProps {
 export default function HeaderPanel({ contractAddress, tokenTicker, price, tokenImage }: HeaderPanelProps) {
   return (
     <div className="flex items-center h-full mx-2 px-4 space-x-4">
-      <Image src={tokenImage} alt={`${tokenTicker} logo`} width={32} height={32} />
+      <Image src={tokenImage} alt={`${tokenTicker} logo`} width={32} height={32} className="rounded-full" />
       <div className="flex items-center space-x-4">
         <span className="text-md font-semibold">{`${tokenTicker}/SOL`}</span>
         <Separator orientation="vertical" className="h-5 w-px bg-muted-foreground" />
         <div className="flex flex-col">
-          <span className={`text-sm ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>{`${price} SOL ($${(250 * price).toFixed(2)})`}</span>
-          <span className={`text-xs ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>24h: {2.5 > 0 ? '+' : ''}{2.5}%</span>
+          <div className="flex items-center gap-1">
+            <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
+            <span className="text-sm">{`${formatLamports(price).toPrecision(3)} SOL ($${(180 * formatLamports(price)).toPrecision(3)})`}</span>
+          </div>
+          {/* <span className={`text-xs ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>24h: {2.5 > 0 ? '+' : ''}{2.5}%</span> */}
         </div>
         <Separator orientation="vertical" className="h-5 w-px bg-muted-foreground/50" />
         <div className="flex items-center gap-2">

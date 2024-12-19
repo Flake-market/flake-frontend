@@ -1,1 +1,1 @@
-export const FACTORY_ADDRESS = "2aQa12MEeYz18szoASySAZSTkhfFwDTr5dY1BZJ9PcLX";
+export const FACTORY_ADDRESS = "9j3paGo5jc2fzvpgx34GMmA1y1CUY7fomjVvMABDtq9x";

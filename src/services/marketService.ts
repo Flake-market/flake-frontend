@@ -1,5 +1,4 @@
 import { MarketResponse, PairData } from '../app/markets/types/MarketTypes';
-import fetch from 'node-fetch';
 
 export class MarketService {
     private readonly API_URL = '/api/markets';
@@ -28,16 +27,16 @@ export class MarketService {
     }
 
     // Get all unique creators
-    async getAllCreators(): Promise<string[]> {
-        const data = await this.fetchMarketData();
-        return [...new Set(data.pairs.map(pair => pair.creator))];
-    }
+    // async getAllCreators(): Promise<string[]> {
+    //     const data = await this.fetchMarketData();
+    //     return [...new Set(data.pairs.map(pair => pair.creator))];
+    // }
 
     // Get all pairs with price above certain threshold
-    async getPairsAbovePrice(priceThreshold: string): Promise<PairData[]> {
-        const data = await this.fetchMarketData();
-        return data.pairs.filter(pair => 
-            BigInt(pair.basePrice) > BigInt(priceThreshold)
-        );
-    }
+    // async getPairsAbovePrice(priceThreshold: string): Promise<PairData[]> {
+    //     const data = await this.fetchMarketData();
+    //     return data.pairs.filter(pair => 
+    //         BigInt(pair.basePrice) > BigInt(priceThreshold)
+    //     );
+    // }
 }

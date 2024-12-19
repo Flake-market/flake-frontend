@@ -67,7 +67,7 @@ export default function PairPage() {
                     pairAddress={pairData.pairKey}
                     attentionToken={pairData.attentionToken}
                     creatorPublicKey={pairData.creator}
-                    basePrice={Number(pairData.basePrice)}
+                    currentSupply={pairData.supply}
                 />
             </section>
         </div>
