@@ -3,7 +3,7 @@ import { Idl } from '@coral-xyz/anchor';
 export type Flake = Idl;
 
 export const IDL: Flake = {
-    "address": "3TSDjEyy4Hu3MejRUb4AMBrEQ8nRUtAXPw5Rr3Jkn1NM",
+    "address": "8rT4b7dXQJxXpumCq45UCekRTwXiRBjJG5kVXnqvd4bd",
     "metadata": {
       "name": "flake",
       "version": "0.1.0",
@@ -11,6 +11,40 @@ export const IDL: Flake = {
       "description": "Created with Anchor"
     },
     "instructions": [
+      {
+        "name": "accept_request",
+        "discriminator": [
+          4,
+          60,
+          28,
+          227,
+          25,
+          199,
+          246,
+          124
+        ],
+        "accounts": [
+          {
+            "name": "pair",
+            "writable": true
+          },
+          {
+            "name": "creator",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "system_program",
+            "address": "11111111111111111111111111111111"
+          }
+        ],
+        "args": [
+          {
+            "name": "request_index",
+            "type": "u8"
+          }
+        ]
+      },
       {
         "name": "create_pair",
         "discriminator": [
@@ -156,6 +190,60 @@ export const IDL: Flake = {
         ]
       },
       {
+        "name": "submit_request",
+        "discriminator": [
+          122,
+          30,
+          180,
+          251,
+          206,
+          230,
+          254,
+          57
+        ],
+        "accounts": [
+          {
+            "name": "pair",
+            "writable": true
+          },
+          {
+            "name": "attention_token_mint",
+            "writable": true
+          },
+          {
+            "name": "user_token_account",
+            "writable": true
+          },
+          {
+            "name": "creator_token_account",
+            "writable": true
+          },
+          {
+            "name": "user",
+            "writable": true,
+            "signer": true
+          },
+          {
+            "name": "token_program",
+            "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          },
+          {
+            "name": "system_program",
+            "address": "11111111111111111111111111111111"
+          }
+        ],
+        "args": [
+          {
+            "name": "request_index",
+            "type": "u8"
+          },
+          {
+            "name": "ad_text",
+            "type": "string"
+          }
+        ]
+      },
+      {
         "name": "swap",
         "discriminator": [
           248,
@@ -281,6 +369,45 @@ export const IDL: Flake = {
           56,
           30
         ]
+      },
+      {
+        "name": "RequestAccepted",
+        "discriminator": [
+          49,
+          16,
+          162,
+          180,
+          83,
+          220,
+          40,
+          133
+        ]
+      },
+      {
+        "name": "RequestSubmitted",
+        "discriminator": [
+          113,
+          213,
+          202,
+          246,
+          213,
+          106,
+          73,
+          44
+        ]
+      },
+      {
+        "name": "SwapExecuted",
+        "discriminator": [
+          150,
+          166,
+          26,
+          225,
+          28,
+          89,
+          38,
+          79
+        ]
       }
     ],
     "errors": [
@@ -308,6 +435,36 @@ export const IDL: Flake = {
         "code": 6004,
         "name": "SlippageExceeded",
         "msg": "Slippage tolerance exceeded"
+      },
+      {
+        "code": 6005,
+        "name": "InvalidRequestIndex",
+        "msg": "Invalid request index"
+      },
+      {
+        "code": 6006,
+        "name": "AdTextTooLong",
+        "msg": "Ad text too long"
+      },
+      {
+        "code": 6007,
+        "name": "InsufficientTokens",
+        "msg": "Insufficient tokens"
+      },
+      {
+        "code": 6008,
+        "name": "UnauthorizedCaller",
+        "msg": "Unauthorized caller"
+      },
+      {
+        "code": 6009,
+        "name": "RequestNotFound",
+        "msg": "Request not found or not in pending status"
+      },
+      {
+        "code": 6010,
+        "name": "RequestAlreadyProcessed",
+        "msg": "Request has already been processed"
       }
     ],
     "types": [
@@ -463,6 +620,32 @@ export const IDL: Flake = {
                   }
                 }
               }
+            },
+            {
+              "name": "pending_requests",
+              "type": {
+                "vec": {
+                  "defined": {
+                    "name": "Request"
+                  }
+                }
+              }
+            },
+            {
+              "name": "s0",
+              "type": "u64"
+            },
+            {
+              "name": "pmin",
+              "type": "u64"
+            },
+            {
+              "name": "pmax",
+              "type": "u64"
+            },
+            {
+              "name": "smax",
+              "type": "u64"
             }
           ]
         }
@@ -492,6 +675,62 @@ export const IDL: Flake = {
         }
       },
       {
+        "name": "Request",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "user",
+              "type": "pubkey"
+            },
+            {
+              "name": "request_index",
+              "type": "u8"
+            },
+            {
+              "name": "ad_text",
+              "type": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            },
+            {
+              "name": "status",
+              "type": {
+                "defined": {
+                  "name": "RequestStatus"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "RequestAccepted",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "creator",
+              "type": "pubkey"
+            },
+            {
+              "name": "request_index",
+              "type": "u8"
+            },
+            {
+              "name": "user",
+              "type": "pubkey"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            }
+          ]
+        }
+      },
+      {
         "name": "RequestConfig",
         "type": {
           "kind": "struct",
@@ -503,6 +742,86 @@ export const IDL: Flake = {
             {
               "name": "description",
               "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "RequestStatus",
+        "type": {
+          "kind": "enum",
+          "variants": [
+            {
+              "name": "Pending"
+            },
+            {
+              "name": "Accepted"
+            },
+            {
+              "name": "Rejected"
+            },
+            {
+              "name": "Refunded"
+            }
+          ]
+        }
+      },
+      {
+        "name": "RequestSubmitted",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "pair_key",
+              "type": "pubkey"
+            },
+            {
+              "name": "user",
+              "type": "pubkey"
+            },
+            {
+              "name": "request_index",
+              "type": "u8"
+            },
+            {
+              "name": "ad_text",
+              "type": "string"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            }
+          ]
+        }
+      },
+      {
+        "name": "SwapExecuted",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "is_buy",
+              "type": "bool"
+            },
+            {
+              "name": "amount_in",
+              "type": "u64"
+            },
+            {
+              "name": "amount_out",
+              "type": "u64"
+            },
+            {
+              "name": "user",
+              "type": "pubkey"
+            },
+            {
+              "name": "pair_key",
+              "type": "pubkey"
+            },
+            {
+              "name": "attention_token_mint",
+              "type": "pubkey"
             }
           ]
         }
