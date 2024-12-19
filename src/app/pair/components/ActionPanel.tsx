@@ -234,7 +234,7 @@ export default function ActionPanel({
                 </div>
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? "/images/tokens/solana.svg" : tokenImage} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} />
+                        <Image src={isBuy ? "/images/tokens/solana.svg" : tokenImage} alt={isBuy ? "SOL" : tokenTicker} width={20} height={20} className={!isBuy ? "rounded-full" : ""} />
                     </div>
                     <Input
                         type="text"
@@ -252,7 +252,7 @@ export default function ActionPanel({
             <div className="flex flex-col mb-6 mx-4 mt-2">
                 <div className="relative">
                     <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-                        <Image src={isBuy ? tokenImage : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} />
+                        <Image src={isBuy ? tokenImage : "/images/tokens/solana.svg"} alt={isBuy ? tokenTicker : "SOL"} width={20} height={20} className={isBuy ? "rounded-full" : ""} />
                     </div>
                     <Input
                         type="text"

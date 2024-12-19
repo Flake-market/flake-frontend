@@ -84,8 +84,8 @@ export const columns: ColumnDef<PairData>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex flex-col w-[140px]">
-        <span>${formatLamports(row.original.marketCap)}</span>
-        <span className="text-sm text-muted-foreground">{formatLamports(row.original.price)} SOL</span>
+        <span>{formatLamports(row.original.marketCap).toPrecision(3)} SOL</span>
+        <span className="text-sm text-muted-foreground">{Number(formatLamports(row.original.price).toPrecision(3))} SOL</span>
       </div>
     ),
   },
@@ -106,7 +106,12 @@ export const columns: ColumnDef<PairData>[] = [
         />
       </Button>
     ),
-    cell: ({ row }) => <div className="w-[140px]">${formatLamports(row.original.supply)}</div>,
+    cell: ({ row }) => (
+      <div className="w-[140px] flex items-center gap-1">
+        <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
+        {formatLamports(row.original.liquidity).toPrecision(3)} SOL
+      </div>
+    ),
   },
   {
     accessorKey: "volume",
@@ -125,7 +130,12 @@ export const columns: ColumnDef<PairData>[] = [
         />
       </Button>
     ),
-    cell: ({ row }) => <div className="w-[140px]">${row.original.volume.toLocaleString()}</div>,
+    cell: ({ row }) => (
+      <div className="w-[140px] flex items-center gap-1">
+        <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
+        {formatLamports(row.original.volume).toPrecision(3)} SOL
+      </div>
+    ),
   },
   {
     accessorKey: "transactions",
@@ -162,24 +172,7 @@ export const columns: ColumnDef<PairData>[] = [
       const date = new Date(row.original.createdAt);
       return <div className="w-[120px]">{date.toLocaleDateString()}</div>;
     },
-  },
-  {
-    id: "actions",
-    header: () => (
-      <div className="flex items-center gap-1">
-        <Zap className="h-4 w-4" />
-        QUICK BUY
-      </div>
-    ),
-    cell: ({  }) => (
-      <div className="w-[120px]">
-        <Button variant="outline" size="default" className="flex items-center gap-2 rounded-full">
-          <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
-          1 SOL
-        </Button>
-      </div>
-    ),
-  },
+  }
 ]
 
 export function MarketTable() {
