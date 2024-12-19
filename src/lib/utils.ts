@@ -1,3 +1,5 @@
+import { BN } from "@coral-xyz/anchor";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -12,6 +14,14 @@ export function sanitizeInput(value: string): string {
     parts.pop();
   }
   return parts.join('.');
+}
+
+export function parseLamports(value: string): BN {
+  return new BN(Number(value) * LAMPORTS_PER_SOL);
+}
+
+export function formatLamports(value: number): number {
+  return value / LAMPORTS_PER_SOL;
 }
 
 
