@@ -57,7 +57,7 @@ export function Navbar() {
                         <div className="ml-8 flex items-center space-x-4">
                             <Link href="/markets" className={getClassName('markets')}>Markets</Link>
                             <Link href="/create" className={getClassName('create')}>Create</Link>
-                            <Link href="/manage" className={getClassName('manage')}>Manage</Link>
+                            {/* <Link href="/manage" className={getClassName('manage')}>Manage</Link> */}
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">
