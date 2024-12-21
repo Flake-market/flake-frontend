@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge"
 export const Pmin = 0.00004;
 export const Pmax = 0.1;
 export const Smax = 10000000;
+export const solPrice = 200; // TODO: To fetch from some other api
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

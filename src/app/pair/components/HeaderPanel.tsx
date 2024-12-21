@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { Separator } from "@/components/ui/separator"
 import { Copy } from "lucide-react"
-import { formatLamports } from "@/lib/utils";
+import { formatLamports, solPrice } from "@/lib/utils";
 
 interface HeaderPanelProps {
   contractAddress: string;
@@ -21,7 +21,7 @@ export default function HeaderPanel({ contractAddress, tokenTicker, price, token
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <Image src="/images/tokens/solana.svg" alt="SOL" width={16} height={16} />
-            <span className="text-sm">{`${formatLamports(price).toPrecision(3)} SOL ($${(180 * formatLamports(price)).toPrecision(3)})`}</span>
+            <span className="text-sm">{`${formatLamports(price).toPrecision(3)} SOL ($${(solPrice * formatLamports(price)).toPrecision(3)})`}</span>
           </div>
           {/* <span className={`text-xs ${2.5 > 0 ? 'text-green-400' : 'text-red-500'}`}>24h: {2.5 > 0 ? '+' : ''}{2.5}%</span> */}
         </div>

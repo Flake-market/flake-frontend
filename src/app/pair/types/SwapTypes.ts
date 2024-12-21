@@ -8,4 +8,6 @@ export interface Swap {
     amountOut: number;
     createdAt: string;
     averagePrice: number;
+    startPrice: number;
+    endPrice: number;
 }
