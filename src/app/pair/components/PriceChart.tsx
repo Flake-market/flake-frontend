@@ -27,13 +27,42 @@ const PriceChart = ({ swaps }: ChartContainerProps) => {
     const processSwapsToCandles = (swaps: Swap[], intervalMinutes: number = 5) => {
         if (!swaps.length) return [];
         
-        const candleData: CandleData = {};
-        
         // Sort swaps by timestamp
         const sortedSwaps = [...swaps].sort((a, b) => 
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
         );
         
+        // Get start and end times
+        const startTime = new Date(sortedSwaps[0].createdAt);
+        const endTime = new Date(sortedSwaps[sortedSwaps.length - 1].createdAt);
+        
+        // Create array of all possible timestamps
+        const timestamps: number[] = [];
+        const currentTime = new Date(startTime);
+        currentTime.setMinutes(Math.floor(currentTime.getMinutes() / intervalMinutes) * intervalMinutes);
+        currentTime.setSeconds(0);
+        currentTime.setMilliseconds(0);
+
+        while (currentTime <= endTime) {
+            timestamps.push(currentTime.getTime());
+            currentTime.setMinutes(currentTime.getMinutes() + intervalMinutes);
+        }
+
+        // Initialize candleData with all timestamps
+        const candleData: CandleData = {};
+        let lastKnownPrice = formatLamports(sortedSwaps[0].startPrice * solPrice); // Initialize with first price
+
+        timestamps.forEach(timestamp => {
+            candleData[timestamp.toString()] = {
+                open: lastKnownPrice,
+                high: lastKnownPrice,
+                low: lastKnownPrice,
+                close: lastKnownPrice,
+                volume: 0
+            };
+        });
+
+        // Process swaps
         sortedSwaps.forEach(swap => {
             const timestamp = new Date(swap.createdAt);
             timestamp.setMinutes(Math.floor(timestamp.getMinutes() / intervalMinutes) * intervalMinutes);
@@ -41,23 +70,14 @@ const PriceChart = ({ swaps }: ChartContainerProps) => {
             timestamp.setMilliseconds(0);
             
             const timeKey = timestamp.getTime().toString();
-            
-            // Convert startPrice and endPrice to final USD values
-            // (Assuming solPrice is globally available or imported accordingly)
             const startPriceUSD = formatLamports(swap.startPrice * solPrice);
-            const endPriceUSD   = formatLamports(swap.endPrice   * solPrice);
+            const endPriceUSD = formatLamports(swap.endPrice * solPrice);
 
-            // For each time segment, if it's the first swap,
-            // set open to startPrice, close to endPrice
-            // high is max of start/end, low is min of start/end.
-            if (!candleData[timeKey]) {
-                candleData[timeKey] = {
-                    open:  startPriceUSD,
-                    high:  Math.max(startPriceUSD, endPriceUSD),
-                    low:   Math.min(startPriceUSD, endPriceUSD),
-                    close: endPriceUSD,
-                    volume: swap.isBuy ? swap.amountOut : swap.amountIn
-                };
+            if (candleData[timeKey].volume === 0) {
+                candleData[timeKey].open = startPriceUSD;
+                candleData[timeKey].high = Math.max(startPriceUSD, endPriceUSD);
+                candleData[timeKey].low = Math.min(startPriceUSD, endPriceUSD);
+                candleData[timeKey].close = endPriceUSD;
             } else {
                 candleData[timeKey].high = Math.max(
                     candleData[timeKey].high, 
@@ -69,18 +89,30 @@ const PriceChart = ({ swaps }: ChartContainerProps) => {
                     startPriceUSD, 
                     endPriceUSD
                 );
-                // Update close to the last swap's end price
                 candleData[timeKey].close = endPriceUSD;
-                candleData[timeKey].volume += swap.isBuy ? swap.amountOut : swap.amountIn;
+            }
+            candleData[timeKey].volume += swap.isBuy ? swap.amountOut : swap.amountIn;
+            lastKnownPrice = endPriceUSD; // Update last known price
+        });
+
+        // For any remaining empty intervals after the last trade, use the last known price
+        timestamps.forEach(timestamp => {
+            const timeKey = timestamp.toString();
+            if (candleData[timeKey].volume === 0) {
+                candleData[timeKey].open = lastKnownPrice;
+                candleData[timeKey].high = lastKnownPrice;
+                candleData[timeKey].low = lastKnownPrice;
+                candleData[timeKey].close = lastKnownPrice;
             }
         });
 
-        const processedData = Object.entries(candleData).map(([time, data]) => ({
-            time: parseInt(time) / 1000 as UTCTimestamp,
-            open: data.open,
-            high: data.high,
-            low: data.low,
-            close: data.close
+        // Convert to final format
+        const processedData = timestamps.map(timestamp => ({
+            time: (timestamp / 1000) as UTCTimestamp,
+            open: candleData[timestamp.toString()].open,
+            high: candleData[timestamp.toString()].high,
+            low: candleData[timestamp.toString()].low,
+            close: candleData[timestamp.toString()].close
         }));
 
         return processedData;
