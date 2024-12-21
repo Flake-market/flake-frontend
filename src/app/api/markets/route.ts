@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { MarketResponse } from '@/types/MarketTypes';
+import { MarketResponse } from '@/app/markets/types/MarketTypes';
 
 export async function GET() {
     try {
