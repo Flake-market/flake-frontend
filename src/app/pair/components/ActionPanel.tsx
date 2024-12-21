@@ -24,14 +24,16 @@ export default function ActionPanel({
     pairAddress,
     attentionToken,
     creatorPublicKey,
-    currentSupply
+    currentSupply,
+    onTransactionSuccess
 }: { 
     tokenTicker: string, 
     tokenImage: string,
     pairAddress: string,
     attentionToken: string,
     creatorPublicKey: string,
-    currentSupply: number
+    currentSupply: number,
+    onTransactionSuccess: () => Promise<void>
 }) {
     const [isBuy, setIsBuy] = useState(true);
     const [input, setInput] = useState<string>("");
@@ -187,6 +189,9 @@ export default function ActionPanel({
                     </>
                 ),
             });
+
+            // After successful transaction
+            await onTransactionSuccess()
 
             // Reset form
             setInput("");
