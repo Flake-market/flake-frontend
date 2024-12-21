@@ -3,6 +3,9 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { Toaster } from "@/components/ui/toaster";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Flake",
@@ -15,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${inter.className}`}>
       <body>
         <WalletProvider>
           <div className="w-full custom-background min-h-screen">
