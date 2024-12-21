@@ -188,7 +188,6 @@ export function MarketTable() {
       try {
         const marketData = await marketService.fetchMarketData();
         setData(marketData.pairs)
-        console.log('Fetched market data:', marketData);
       } catch (error) {
         console.error('Error fetching market data:', error);
       }

@@ -12,7 +12,6 @@ export class SwapService {
             }
 
             const data = await response.json();
-            console.log('API response data:', data); // Debug the raw response
 
             // Check if data is an array, if not, try to access the correct property
             const allSwaps: Swap[] = Array.isArray(data) ? data : (data.swaps || []);
