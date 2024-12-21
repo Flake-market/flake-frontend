@@ -90,7 +90,6 @@ export default function Create() {
       }
 
       const data = await response.json();
-      console.log("data", data)
       setUploadedImageUrl(`https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`);
       return data.IpfsHash;
     } catch (error) {
