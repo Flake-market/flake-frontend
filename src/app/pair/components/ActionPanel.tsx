@@ -5,14 +5,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { sanitizeInput, exactSolToTokens, exactTokensToSol, tokensToExactSol, solToExactTokens, parseLamports } from "@/lib/utils";
 import { ArrowDown } from "lucide-react";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tooltip } from "@/components/ui/tooltip";
 import { useWallet } from "@/contexts/WalletContext";
 import { FactoryService } from "@/services/factory";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useToast } from "@/hooks/use-toast";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import { FACTORY_ADDRESS } from "@/config/contracts";
@@ -47,16 +47,50 @@ export default function ActionPanel({
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     
-    // ============= MOCK DATA =============
-    // TODO: get account and balances from wallet
-    const account = "0x0000000000000000000000000000000000000000";
-    const solBalance: number = 100000;
-    const atnBalance: number = 100000;
+    const [solBalance, setSolBalance] = useState<number>(0);
+    const [atnBalance, setAtnBalance] = useState<number>(0);
     const slippage: number = 0.05;
-
     const pairToken = "SOL";
 
     // ===================================
+
+    const fetchBalances = async () => {
+        if (connected && wallet?.publicKey) {
+            try {
+                const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+                
+                // Fetch SOL balance
+                const solBalance = await connection.getBalance(new PublicKey(wallet.publicKey.toString()));
+                setSolBalance(solBalance / LAMPORTS_PER_SOL);
+                
+                // Fetch ATN balance
+                const ata = await getAssociatedTokenAddress(
+                    new PublicKey(attentionToken),
+                    new PublicKey(wallet.publicKey.toString())
+                );
+                
+                try {
+                    const tokenBalance = await connection.getTokenAccountBalance(ata);
+                    setAtnBalance(Number(tokenBalance.value.uiAmount || 0));
+                } catch (error) {
+                    // If token account doesn't exist yet, balance is 0
+                    setAtnBalance(0);
+                }
+                
+            } catch (error) {
+                console.error('Error fetching balances:', error);
+                setSolBalance(0);
+                setAtnBalance(0);
+            }
+        } else {
+            setSolBalance(0);
+            setAtnBalance(0);
+        }
+    };
+
+    useEffect(() => {
+        fetchBalances();
+    }, [connected, wallet?.publicKey, attentionToken]);
 
     const handleTabChange = (value: string) => {
         setIsBuy(value === "true");
@@ -66,8 +100,7 @@ export default function ActionPanel({
     };
 
     const handleMaxSizeClick = () => {
-        if (account) {
-            //TODO: get sol balance from wallet
+        if (wallet?.publicKey) {
             if (isBuy) {
                 handleInputChange({ target: { value: solBalance.toString() } } as React.ChangeEvent<HTMLInputElement>);
             } else {
@@ -193,6 +226,7 @@ export default function ActionPanel({
 
             // After successful transaction
             await onTransactionSuccess();
+            await fetchBalances();
 
             // Reset form
             setInput("");
@@ -232,7 +266,7 @@ export default function ActionPanel({
                         variant="link"
                         size="sm"
                         onClick={handleMaxSizeClick}
-                        disabled={!account || (isBuy ? solBalance : atnBalance) === 0}
+                        disabled={!wallet?.publicKey || (isBuy ? solBalance : atnBalance) === 0}
                         className="h-6 px-2 text-sm text-lime-500"
                     >
                         Balance: {isBuy ? solBalance : atnBalance} {isBuy ? pairToken : tokenTicker}
