@@ -19,18 +19,18 @@ export default function Create() {
   
   // Form state
   const [formData, setFormData] = useState<CreateTokenParams>({
-    name: "Isha",
-    ticker: "ISHA",
-    description: "A decentralized token for the community",
+    name: "",
+    ticker: "",
+    description: "",
     token_image: "",
     socials: {
-      twitter: "@ishatoken",
-      telegram: "@ishaofficial", 
-      website: "ishatoken.xyz",
+      twitter: "",
+      telegram: "", 
+      website: "",
     },
     base_price: 1_000_000,
     requests: [{
-      price: 1000,
+      price: 1000000000000,
       description: "sponsored post on X",
     }]
   });
@@ -153,7 +153,7 @@ export default function Create() {
               href={`https://solscan.io/account/${pairAddress}?cluster=devnet`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-lime-500 hover:underline"
+              className="text-black hover:underline"
             >
               {pairAddress.slice(0, 20)}...
             </a>
@@ -163,7 +163,7 @@ export default function Create() {
               href={`https://solscan.io/tx/${signature}?cluster=devnet`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-lime-500 hover:underline"
+              className="text-black hover:underline"
             >
               {signature.slice(0, 20)}...
             </a>
@@ -186,20 +186,20 @@ export default function Create() {
 
   return (
       <main className="container mx-auto py-12 max-w-6xl">
-        <h1 className="text-4xl font-bold mb-10 text-center">
+        <h1 className="text-4xl font-bold mb-10 text-center text-black">
           Create Attention Token
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           
           {/* Left Card - ATTENTION TOKEN DETAILS & SOCIALS */}
-          <Card className="border border-gray-200 shadow-sm rounded-lg">
-            <CardHeader className="pb-4 border-b border-gray-200">
-              <CardTitle className="text-2xl font-semibold">Attention Token Details</CardTitle>
+          <Card className="bg-transparent border-2 border-black shadow-sm rounded-lg">
+            <CardHeader className="pb-4 border-b-2 border-black">
+              <CardTitle className="text-2xl font-semibold text-black">Attention Token Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 pt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-sm font-medium">
+                  <Label htmlFor="name" className="text-sm font-medium text-black">
                     Name
                   </Label>
                   <Input 
@@ -207,11 +207,11 @@ export default function Create() {
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     placeholder="Your Token Name" 
-                    className="h-10" 
+                    className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="ticker" className="text-sm font-medium">
+                  <Label htmlFor="ticker" className="text-sm font-medium text-black">
                     Ticker
                   </Label>
                   <Input 
@@ -219,13 +219,13 @@ export default function Create() {
                     value={formData.ticker}
                     onChange={(e) => handleInputChange('ticker', e.target.value)}
                     placeholder="e.g. ATN" 
-                    className="h-10" 
+                    className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-medium">
+                <Label htmlFor="description" className="text-sm font-medium text-black">
                   Description
                 </Label>
                 <Textarea 
@@ -233,15 +233,15 @@ export default function Create() {
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   placeholder="A short, compelling description of your token..."
-                  className="min-h-[120px] resize-none"
+                  className="min-h-[120px] resize-none bg-transparent border-2 border-black text-black placeholder:text-black/50"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Token Image</Label>
+                <Label className="text-sm font-medium text-black">Token Image</Label>
                 <label
                   htmlFor="tokenImage"
-                  className="mt-3 flex items-center justify-center border border-dashed border-gray-300 rounded-lg p-6 hover:bg-gray-500 transition-colors cursor-pointer text-sm text-muted-foreground"
+                  className="mt-3 flex items-center justify-center border-2 border-dashed border-black rounded-lg p-6 hover:bg-black/10 transition-colors cursor-pointer text-sm text-black"
                 >
                   <input
                     id="tokenImage"
@@ -253,37 +253,37 @@ export default function Create() {
                   {selectedImage ? selectedImage.name : "Upload Image"}
                 </label>
               </div>
-              <div className="pt-8 border-t border-gray-200 space-y-6">
-                <h2 className="text-xl font-semibold">Socials</h2>
+              <div className="pt-8 border-t-2 border-black space-y-6">
+                <h2 className="text-xl font-semibold text-black">Socials</h2>
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="twitter" className="text-sm font-medium">Twitter</Label>
+                    <Label htmlFor="twitter" className="text-sm font-medium text-black">Twitter</Label>
                     <Input 
                       id="twitter" 
                       value={formData.socials.twitter}
                       onChange={(e) => handleSocialChange('twitter', e.target.value)}
                       placeholder="@handle" 
-                      className="h-10" 
+                      className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="telegram" className="text-sm font-medium">Telegram</Label>
+                    <Label htmlFor="telegram" className="text-sm font-medium text-black">Telegram</Label>
                     <Input 
                       id="telegram" 
                       value={formData.socials.telegram}
                       onChange={(e) => handleSocialChange('telegram', e.target.value)}
                       placeholder="@handle" 
-                      className="h-10" 
+                      className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="website" className="text-sm font-medium">Website</Label>
+                    <Label htmlFor="website" className="text-sm font-medium text-black">Website</Label>
                     <Input 
                       id="website" 
                       value={formData.socials.website}
                       onChange={(e) => handleSocialChange('website', e.target.value)}
                       placeholder="https://yourwebsite.com" 
-                      className="h-10" 
+                      className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                     />
                   </div>
                 </div>
@@ -292,59 +292,25 @@ export default function Create() {
           </Card>
 
           {/* Right Card - QUOTE TOKEN & SETTINGS */}
-          <Card className="border border-gray-200 shadow-sm rounded-lg">
-            <CardHeader className="pb-4 border-b border-gray-200">
-              <CardTitle className="text-2xl font-semibold">Set Requests</CardTitle>
+          <Card className="bg-transparent border-2 border-black shadow-sm rounded-lg">
+            <CardHeader className="pb-4 border-b-2 border-black">
+              <CardTitle className="text-2xl font-semibold text-black">Set Requests</CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 pt-6">
-
-              {/* <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="quoteToken" className="text-sm font-medium">Select Token</Label>
-                  <Select onValueChange={setSelectedToken} value={selectedToken}>
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Choose a quote token" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sol">SOL</SelectItem>
-                      <SelectItem value="usdc">USDC</SelectItem>
-                      <SelectItem value="custom">Custom Token</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {selectedToken === "custom" && (
-                  <div className="space-y-2">
-                    <Label htmlFor="contractAddress" className="text-sm font-medium">
-                      Contract Address
-                    </Label>
-                    <Input id="contractAddress" placeholder="Enter contract address" className="h-10" />
-                  </div>
-                )}
-
-                <div className="space-y-2 pt-4">
-                  <Label htmlFor="basePrice" className="text-sm font-medium">
-                    Base Price (PAIR / TOKEN)
-                  </Label>
-                  <Input id="basePrice" type="number" placeholder="0.0" className="h-10" />
-                </div>
-              </div> */}
-
-              <div className="pt-4 border-gray-200 space-y-6">
-                {/* <h2 className="text-xl font-semibold">Set Requests</h2> */}
-                <div className="space-y-4 p-4 border rounded-lg">
-                  <h3 className="font-medium text-base">Request #1</h3>
+              <div className="pt-4 space-y-6">
+                <div className="space-y-4 p-4 border-2 border-black rounded-lg">
+                  <h3 className="font-medium text-base text-black">Request #1</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <TooltipProvider>
                         <Tooltip delayDuration={0}>
                           <TooltipTrigger asChild>
                             <div className="flex items-center gap-1 h-6">
-                              <Label htmlFor="price" className="text-sm font-medium">Tokens Required</Label>
-                              <InfoIcon className="h-4 w-4 text-muted-foreground" />
+                              <Label htmlFor="price" className="text-sm font-medium text-black">Tokens Required</Label>
+                              <InfoIcon className="h-4 w-4 text-black" />
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent side="top">
+                          <TooltipContent side="top" className="bg-white text-black border-2 border-black">
                             <div className="space-y-1 text-sm">
                               <p>Number of tokens required for this request option.</p>
                               <p>Minimum tokens per request is 1000.</p>
@@ -357,38 +323,38 @@ export default function Create() {
                         value={formData.requests[0].price}
                         onChange={(e) => handleRequestChange(0, 'price', e.target.value)}
                         placeholder="# tokens (min 1000)" 
-                        className="h-10" 
+                        className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="optionDescription" className="text-sm font-medium">Description</Label>
+                      <Label htmlFor="optionDescription" className="text-sm font-medium text-black">Description</Label>
                       <Input 
                         id="optionDescription" 
                         value={formData.requests[0].description}
                         onChange={(e) => handleRequestChange(0, 'description', e.target.value)}
                         placeholder="e.g. sponsored post on X" 
-                        className="h-10" 
+                        className="h-10 bg-transparent border-2 border-black text-black placeholder:text-black/50" 
                       />
                     </div>
                   </div>
                 </div>
 
-                <Button variant="outline" className="w-full h-10">
+                {/* <Button variant="outline" className="w-full h-10 bg-transparent border-2 border-black text-black hover:bg-black/10">
                   + Add Request (Max 3)
-                </Button>
+                </Button> */}
               </div>
 
-              <div className="pt-8 border-t border-gray-200">
+              <div className="pt-8 border-t-2 border-black">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <div className="w-full">
                         <Button 
                           onClick={handleCreateToken}
-                          className={`w-full h-12 text-sm font-medium ${
+                          className={`w-full h-12 text-sm font-medium rounded-md transition-all duration-200 ${
                             connected 
-                              ? "bg-lime-500 hover:bg-lime-700 text-white" 
-                              : "bg-gray-400 text-gray-100"
+                              ? "border border-black bg-zinc-900 text-white hover:bg-zinc-900/80" 
+                              : "border border-black bg-transparent text-black hover:bg-black/80"
                           }`}
                           disabled={!connected || isLoading}
                         >
@@ -397,7 +363,7 @@ export default function Create() {
                       </div>
                     </TooltipTrigger>
                     {!connected && (
-                      <TooltipContent side="bottom">
+                      <TooltipContent side="bottom" className="bg-white text-black border-2 border-black">
                         <p>Please connect your wallet to continue</p>
                       </TooltipContent>
                     )}

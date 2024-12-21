@@ -21,8 +21,8 @@ export function Navbar() {
     }, [pathname]);
 
     const getClassName = (activeSection: Section) => {
-        const activeClassName = 'text-lime-400 bg-lime-400/20 px-4 py-1.5 rounded-sm hover:text-lime-400 hover:bg-lime-400/20 hover:rounded-sm';
-        const inactiveClassName = 'text-muted-foreground hover:text-lime-400 hover:bg-primary/10 hover:rounded-sm px-4 py-1.5 transition-all duration-200';
+        const activeClassName = 'px-4 py-1.5 rounded-sm  underline';
+        const inactiveClassName = 'text-muted-foreground hover:text-sky-500 px-4 py-1.5 transition-all duration-200 hover:underline';
         return `${section === activeSection ? activeClassName : inactiveClassName}`
     }
 
@@ -64,7 +64,11 @@ export function Navbar() {
                         <Button
                             onClick={handleWalletClick}
                             disabled={connecting}
-                            className="border border-lime-500 text-lime-500 hover:bg-lime-500/10 bg-transparent px-4 py-1.5 rounded-sm transition-all duration-200 cursor-pointer disabled:opacity-50"
+                            className={`rounded-sm transition-all duration-200 ${
+                                connected 
+                                ? "border-2 border-black bg-transparent text-black hover:bg-black hover:text-white" 
+                                : "border-2 border-black bg-black text-white hover:bg-black/80"
+                            }`}
                         >
                             {getWalletButtonText()}
                         </Button>

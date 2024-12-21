@@ -49,7 +49,7 @@ export const columns: ColumnDef<PairData>[] = [
             href={`https://solscan.io/token/${row.original.pairId}`} 
             target="_blank" 
             rel="noopener noreferrer" 
-            className="text-sm text-lime-400 hover:underline"
+            className="text-sm text-sky-500 hover:underline"
           >
             {row.original.pairKey.slice(0, 10)}...
           </a>
@@ -71,7 +71,7 @@ export const columns: ColumnDef<PairData>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-grey-400"
       >
         MARKET CAP
         <ArrowDownWideNarrow 
@@ -95,7 +95,7 @@ export const columns: ColumnDef<PairData>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-grey-400"
       >
         LIQUIDITY
         <ArrowDownWideNarrow 
@@ -119,7 +119,7 @@ export const columns: ColumnDef<PairData>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-grey-400"
       >
         VOLUME
         <ArrowDownWideNarrow 
@@ -157,7 +157,7 @@ export const columns: ColumnDef<PairData>[] = [
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-lime-400"
+        className="text-left font-medium m-0 p-0 hover:bg-transparent hover:text-grey-400"
       >
         CREATED
         <ArrowDownWideNarrow 

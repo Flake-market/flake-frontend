@@ -158,7 +158,7 @@ export default function RequestPage() {
                 href={`https://solscan.io/address/${pairData.pairKey}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center text-lime-500 hover:underline"
+                className="flex items-center text-grey-500 hover:underline"
               >
                 {pairData.pairKey}
                 <ExternalLink className="ml-1 h-4 w-4" />
@@ -176,7 +176,7 @@ export default function RequestPage() {
             </p>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-lime-600 transition-colors">
+                <button className="bg-grey-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-grey-600 transition-colors">
                   Request
                 </button>
               </DialogTrigger>
@@ -191,8 +191,8 @@ export default function RequestPage() {
                   onChange={(e) => setAdText(e.target.value)}
                 />
                 <button 
-                  className={`bg-lime-500 text-white px-8 py-2 rounded-md mt-4 ${
-                    isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-lime-600'
+                  className={`bg-grey-500 text-white px-8 py-2 rounded-md mt-4 ${
+                    isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-grey-600'
                   }`}
                   onClick={handleSubmitRequest}
                   disabled={isSubmitting || !adText.trim()}
@@ -222,7 +222,7 @@ export default function RequestPage() {
                 onClick={() => setStatusFilter("all")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "all"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -232,7 +232,7 @@ export default function RequestPage() {
                 onClick={() => setStatusFilter("pending")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "pending"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -242,7 +242,7 @@ export default function RequestPage() {
                 onClick={() => setStatusFilter("completed")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "completed"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -274,7 +274,7 @@ export default function RequestPage() {
                       <div className="text-sm text-muted-foreground">
                         {expandedRows.has(index) ? request.adText : `${request.adText.slice(0, 50)}...`}{" "}
                         <button 
-                          className="text-lime-500 hover:underline"
+                          className="text-grey-500 hover:underline"
                           onClick={(e) => {
                             e.stopPropagation();
                             toggleRowExpansion(index);

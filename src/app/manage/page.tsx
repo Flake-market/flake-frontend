@@ -73,7 +73,7 @@ export default function Manage() {
               <p className="text-muted-foreground">Request Fee: 6 SOL</p>
             </div>
           </div>
-          <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-lime-600 transition-colors w-fit">
+          <button className="bg-grey-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-grey-600 transition-colors w-fit">
             Claim
           </button>
         </div>
@@ -98,7 +98,7 @@ export default function Manage() {
                 onClick={() => setStatusFilter("all")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "all"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -108,7 +108,7 @@ export default function Manage() {
                 onClick={() => setStatusFilter("pending")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "pending"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -118,7 +118,7 @@ export default function Manage() {
                 onClick={() => setStatusFilter("completed")}
                 className={`px-4 py-1 text-sm rounded-md transition-colors ${
                   statusFilter === "completed"
-                    ? "border-2 border-lime-500 text-lime-500"
+                    ? "border-2 border-grey-500 text-grey-500"
                     : "border-2 border-muted-foreground text-muted-foreground hover:border-gray-500 hover:text-gray-600"
                 }`}
               >
@@ -152,7 +152,7 @@ export default function Manage() {
                         href={`https://solscan.io/tx/${request.txnHash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center text-lime-500 hover:underline"
+                        className="flex items-center text-grey-500 hover:underline"
                       >
                         {`${request.txnHash.slice(0, 6)}...${request.txnHash.slice(-4)}`}
                         <ExternalLink className="ml-1 h-3 w-3" />
@@ -162,7 +162,7 @@ export default function Manage() {
                     <TableCell>{request.status}</TableCell>
                     <TableCell>{request.age}</TableCell>
                     <TableCell>
-                      <button className="border-2 border-lime-500 text-lime-500 px-4 py-1.5 rounded-md hover:bg-lime-500 hover:text-white transition-colors w-36">
+                      <button className="border-2 border-grey-500 text-grey-500 px-4 py-1.5 rounded-md hover:bg-grey-500 hover:text-white transition-colors w-36">
                         Accept
                       </button>
                     </TableCell>

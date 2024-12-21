@@ -31,23 +31,23 @@ export default function SummaryPanel({ tokenName, description, socials, pairKey 
   return (
     <div className="p-6">
       <div className="flex items-center mb-4">
-        <h2 className="text-2xl font-semibold text-lime-500">{tokenName}</h2>
+        <h2 className="text-2xl font-semibold text-grey-500">{tokenName}</h2>
         <div className="flex ml-auto space-x-3">
           {socials.x || socials.telegram || socials.website ? (
             <>
               {socials.x && (
                 <a href={`${socials.x}`} target="_blank" rel="noopener noreferrer">
-                  <Image src="/images/socials/x.svg" alt="X" width={24} height={24} className="hover:opacity-80"/>
+                  <Image src="/images/socials/x.svg" alt="X" width={24} height={24} className="hover:opacity-50"/>
                 </a>
               )}
               {socials.telegram && (
                 <a href={`${socials.telegram}`} target="_blank" rel="noopener noreferrer">
-                  <Image src="/images/socials/telegram.svg" alt="Telegram" width={24} height={24} className="hover:opacity-80"/>
+                  <Image src="/images/socials/telegram.svg" alt="Telegram" width={24} height={24} className="hover:opacity-50"/>
                 </a>
               )}
               {socials.website && (
                 <a href={`${socials.website}`} target="_blank" rel="noopener noreferrer">
-                  <Globe className="w-6 h-6 text-white hover:opacity-80" />
+                  <Globe className="w-6 h-6 text-black hover:opacity-50" />
                 </a>
               )}
             </>
@@ -56,16 +56,16 @@ export default function SummaryPanel({ tokenName, description, socials, pairKey 
           )}
         </div>
       </div>
-      <p className="mb-6 text-muted-foreground">
+      <p className="mb-6">
         {description ? (
           description.length > 100 ? (
             <span>
               {showFullDescription ? description : `${description.slice(0, 100)}...`}{" "}
               <button 
-                className="text-lime-500 hover:underline"
+                className="text-muted-foreground hover:underline"
                 onClick={() => setShowFullDescription(!showFullDescription)}
               >
-                {showFullDescription ? '[see less]' : '[see more]'}
+                {showFullDescription ? <span className="text-sky-500">[see less]</span> : <span className="text-sky-500">[see more]</span>}
               </button>
             </span>
           ) : (
@@ -82,9 +82,9 @@ export default function SummaryPanel({ tokenName, description, socials, pairKey 
               <Button 
                 onClick={handleRequestClick}
                 className={`h-12 text-sm font-medium ${
-                  connected 
-                    ? "bg-lime-500 hover:bg-lime-700 text-white" 
-                    : "bg-gray-400 text-gray-100"
+                  connected
+                    ? "bg-zinc-900 border border-black text-white hover:bg-zinc-900/80"
+                    : "bg-transparent border border-black text-black hover:bg-black hover:text-white"
                 }`}
                 disabled={!connected}
               >

@@ -31,7 +31,7 @@ export default function HeaderPanel({ contractAddress, tokenTicker, price, token
                 href={`https://solscan.io/token/${contractAddress}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-sm text-muted-foreground hover:text-lime-400 cursor-pointer"
+                className="text-sm text-muted-foreground hover:text-sky-500 cursor-pointer"
             >
                 Token
             </a>
@@ -39,7 +39,7 @@ export default function HeaderPanel({ contractAddress, tokenTicker, price, token
                 onClick={() => {
                     navigator.clipboard.writeText(contractAddress);
                 }}
-                className="text-muted-foreground hover:text-lime-400 active:translate-y-0.5 active:scale-95 transition-transform"
+                className="text-muted-foreground hover:text-sky-500 active:translate-y-0.5 active:scale-95 transition-transform"
             >
                 <Copy className="h-3 w-3" />
             </button>
@@ -50,7 +50,7 @@ export default function HeaderPanel({ contractAddress, tokenTicker, price, token
                 href={`https://solscan.io/token/${contractAddress}`} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-sm text-muted-foreground hover:text-lime-400 cursor-pointer"
+                className="text-sm text-muted-foreground hover:text-sky-500 cursor-pointer"
             >
                 Pair
             </a>
@@ -58,7 +58,7 @@ export default function HeaderPanel({ contractAddress, tokenTicker, price, token
                 onClick={() => {
                     navigator.clipboard.writeText(contractAddress);
                 }}
-                className="text-muted-foreground hover:text-lime-400 active:translate-y-0.5 active:scale-95 transition-transform"
+                className="text-muted-foreground hover:text-sky-500 active:translate-y-0.5 active:scale-95 transition-transform"
             >
                 <Copy className="h-3 w-3" />
             </button>

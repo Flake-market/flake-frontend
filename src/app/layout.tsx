@@ -5,7 +5,7 @@ import { WalletProvider } from "@/contexts/WalletContext";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "atn.fun",
+  title: "Flake",
   description: "Tokenize Attention on Solana",
 };
 
