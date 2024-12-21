@@ -13,10 +13,10 @@ import { Tooltip } from "@/components/ui/tooltip";
 import { useWallet } from "@/contexts/WalletContext";
 import { FactoryService } from "@/services/factory";
 import { PublicKey } from "@solana/web3.js";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useToast } from "@/hooks/use-toast";
 import { getAssociatedTokenAddress } from "@solana/spl-token";
 import { FACTORY_ADDRESS } from "@/config/contracts";
+import { Loader2 } from "lucide-react";
 
 export default function ActionPanel({ 
     tokenTicker, 
@@ -151,8 +151,6 @@ export default function ActionPanel({
         try {
             setIsLoading(true);
             const factoryService = new FactoryService();
-            const amountIn = Number(input);
-            const minimumAmountOut = Number(output);
 
             // Get user's token account
             const userTokenAccount = await getAssociatedTokenAddress(
@@ -162,8 +160,8 @@ export default function ActionPanel({
 
             const { signature } = await factoryService.swap(
                 wallet,
-                amountIn * LAMPORTS_PER_SOL,
-                minimumAmountOut * LAMPORTS_PER_SOL,
+                amount,
+                amountOut,
                 isBuy,
                 new PublicKey(pairAddress),
                 new PublicKey(attentionToken),
@@ -171,6 +169,9 @@ export default function ActionPanel({
                 new PublicKey(creatorPublicKey),
                 new PublicKey(FACTORY_ADDRESS)
             );
+
+            // Add delay before showing success and refreshing data
+            await new Promise(resolve => setTimeout(resolve, 700));
 
             toast({
                 title: "Success!",
@@ -191,7 +192,7 @@ export default function ActionPanel({
             });
 
             // After successful transaction
-            await onTransactionSuccess()
+            await onTransactionSuccess();
 
             // Reset form
             setInput("");
@@ -282,7 +283,14 @@ export default function ActionPanel({
                                 disabled={!connected || isLoading || amount === 0 || amountOut === 0} 
                                 onClick={handleSwap}
                             >
-                                {isLoading ? "Processing..." : (isBuy ? "Buy" : "Sell")}
+                                {isLoading ? (
+                                    <div className="flex items-center justify-center">
+                                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                        Loading...
+                                    </div>
+                                ) : (
+                                    isBuy ? "Buy" : "Sell"
+                                )}
                             </Button>
                         </div>
                     </TooltipTrigger>
