@@ -37,7 +37,7 @@ export default function Create() {
 
   // New state for the selected image file and uploaded image URL
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
+  // const [uploadedImageUrl, setUploadedImageUrl] = useState<string>("");
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -90,7 +90,6 @@ export default function Create() {
       }
 
       const data = await response.json();
-      setUploadedImageUrl(`https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`);
       return data.IpfsHash;
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -253,11 +252,7 @@ export default function Create() {
                   />
                   {selectedImage ? selectedImage.name : "Upload Image"}
                 </label>
-                {uploadedImageUrl && (
-                  <img src={uploadedImageUrl} alt="Uploaded Token" className="mt-4 w-32 h-32 object-cover" />
-                )}
               </div>
-
               <div className="pt-8 border-t border-gray-200 space-y-6">
                 <h2 className="text-xl font-semibold">Socials</h2>
                 <div className="grid grid-cols-1 gap-6">

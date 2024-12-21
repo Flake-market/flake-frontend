@@ -1,4 +1,3 @@
-import { BN } from "@coral-xyz/anchor";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -34,9 +33,7 @@ export function exactSolToTokens(
   C: number        // SOL to spend
 ): number {
   const A = (Pmax - Pmin) / (2 * Smax);
-  console.log("A", A);
   const B = Pmin + (Pmax - Pmin) * (formatLamports(S0) / Smax);
-  console.log("B", B);
   const discriminant = B*B + 4*A*C; // Discriminant for solving quadratic equation
 
   // Quadratic: A*(ΔS)^2 + B*(ΔS) - C = 0

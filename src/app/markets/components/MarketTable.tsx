@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowDownWideNarrow, Search, Zap } from "lucide-react"
+import { ArrowDownWideNarrow, Search } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -188,7 +188,6 @@ export function MarketTable() {
       try {
         const marketData = await marketService.fetchMarketData();
         setData(marketData.pairs)
-        console.log('Fetched market data:', marketData);
       } catch (error) {
         console.error('Error fetching market data:', error);
       }

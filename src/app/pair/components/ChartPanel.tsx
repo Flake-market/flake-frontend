@@ -17,7 +17,6 @@ export default function ChartPanel({ pairAddress, onSwapsUpdate }: ChartPanelPro
     try {
       const swapData = await swapService.getSwapsByPair(pairAddress)
       setSwaps(swapData)
-      console.log("Fetched swaps:", swapData)
     } catch (error) {
       console.error("Error fetching swaps:", error)
     }
