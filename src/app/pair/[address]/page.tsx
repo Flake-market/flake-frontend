@@ -10,20 +10,31 @@ import ChartPanel from "../components/ChartPanel"
 // import { data } from "@/app/markets/components/Mockdata"
 import { PairData } from "@/app/markets/types/MarketTypes"
 import { MarketService } from "@/services/marketService"
+import { LoadingScreen } from "@/components/ui/loading";
 
 export default function PairPage() {
   const [pairData, setPairData] = useState<PairData | null>(null)
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams()
   const marketService = useMemo(() => new MarketService(), [])
 
   const fetchPairData = async () => {
-    const pair = await marketService.getPairByKey(params.address as string)
-    setPairData(pair || null)
+    try {
+      setIsLoading(true);
+      const pair = await marketService.getPairByKey(params.address as string)
+      setPairData(pair || null)
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
     fetchPairData()
   }, [params.address, marketService])
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   if (!pairData) return <div>Pair not found</div>
 
