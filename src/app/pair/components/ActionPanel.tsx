@@ -74,6 +74,7 @@ export default function ActionPanel({
                     setAtnBalance(Number(tokenBalance.value.uiAmount || 0));
                 } catch (error) {
                     // If token account doesn't exist yet, balance is 0
+                    console.error('Error fetching ATN balance:', error);
                     setAtnBalance(0);
                 }
                 
