@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { RequestResponse } from '@/app/pair/types/RequestTypes';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const response = await fetch('http://localhost:3003/api/requests');
         if (!response.ok) {

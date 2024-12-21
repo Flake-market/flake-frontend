@@ -1,6 +1,6 @@
 "use client"
 
-import { createChart, ColorType, IChartApi, ISeriesApi } from 'lightweight-charts';
+import { createChart, ColorType, IChartApi, ISeriesApi, UTCTimestamp } from 'lightweight-charts';
 import { useEffect, useRef } from 'react';
 import { Swap } from '../types/SwapTypes';
 import { formatLamports, solPrice } from '@/lib/utils';
@@ -76,7 +76,7 @@ const PriceChart = ({ swaps }: ChartContainerProps) => {
         });
 
         const processedData = Object.entries(candleData).map(([time, data]) => ({
-            time: Math.floor(parseInt(time) / 1000),
+            time: parseInt(time) / 1000 as UTCTimestamp,
             open: data.open,
             high: data.high,
             low: data.low,
@@ -129,7 +129,7 @@ const PriceChart = ({ swaps }: ChartContainerProps) => {
         // Process and set data
         const candleData = processSwapsToCandles(swaps);
         if (candleData.length > 0) {
-            candlestickSeries.setData(candleData as any);
+            candlestickSeries.setData(candleData);
             chart.timeScale().fitContent();
         }
 

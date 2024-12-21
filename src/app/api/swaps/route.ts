@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { Swap } from '@/app/pair/types/SwapTypes'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         const response = await fetch('http://localhost:3003/api/swaps')
         if (!response.ok) {

@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import { SwapService } from "@/services/swapService"
 import { Swap } from "../types/SwapTypes"
 import { formatLamports } from "@/lib/utils"
