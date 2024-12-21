@@ -4,6 +4,10 @@ import { useParams } from 'next/navigation'
 import { ExternalLink } from "lucide-react";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { useWallet } from "@/contexts/WalletContext";
+import { PublicKey } from "@solana/web3.js";
+import { FactoryService } from "@/services/factory";
+import { useToast } from "@/hooks/use-toast";
 
 import { Separator } from "@/components/ui/separator";
 import {
@@ -47,10 +51,14 @@ export default function RequestPage() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "completed">("all");
   const [open, setOpen] = useState(false);
-
+  const [adText, setAdText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const params = useParams();
-  const marketService = useMemo(() => new MarketService(), [])
+  const { connected, wallet} = useWallet();
+  const { toast } = useToast();
+  const marketService = useMemo(() => new MarketService(), []);
+  const factoryService = useMemo(() => new FactoryService(), []);
 
   useEffect(() => {
     // Fetch pair data based on address
@@ -73,6 +81,38 @@ export default function RequestPage() {
     if (statusFilter === "pending") return request.status === "Pending";
     return request.status === "Completed";
   });
+
+  const handleSubmitRequest = async () => {
+    if (!connected || !wallet || !pairData || !adText.trim()) return;
+
+    try {
+      setIsSubmitting(true);
+      await factoryService.submitRequest(
+        wallet,
+        new PublicKey(pairData.pairKey),
+        new PublicKey(pairData.attentionToken),
+        new PublicKey(pairData.creator),
+        0, // requestIndex - assuming first request type for now
+        adText.trim()
+      );
+      toast({
+          title: "Success!",
+          description: "Request submitted successfully!"
+      });
+      setOpen(false);
+      setAdText("");
+      
+    } catch (error) {
+      console.error('Error submitting request:', error);
+      toast({
+          title: "Error",
+          description: "Failed to submit request. Please try again.",
+          variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <RequireWallet>
@@ -119,9 +159,17 @@ export default function RequestPage() {
                 <Textarea
                   placeholder="Input your text request: E.g. X sponsored post regarding my AI Agent X on Solana"
                   className="w-full h-40"
+                  value={adText}
+                  onChange={(e) => setAdText(e.target.value)}
                 />
-                <button className="bg-lime-500 text-white px-8 py-2 rounded-md mt-4">
-                  1000 {pairData.ticker}
+                <button 
+                  className={`bg-lime-500 text-white px-8 py-2 rounded-md mt-4 ${
+                    isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-lime-600'
+                  }`}
+                  onClick={handleSubmitRequest}
+                  disabled={isSubmitting || !adText.trim()}
+                >
+                  {isSubmitting ? 'Submitting...' : `1000 ${pairData?.ticker}`}
                 </button>
               </DialogContent>
             </Dialog>
