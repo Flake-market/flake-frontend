@@ -50,7 +50,7 @@ export default function PairPage() {
           />
         </section>
         <section className="overflow-hidden border-y ">
-          <ChartPanel />
+          <ChartPanel pairAddress={pairData.pairKey} onSwapsUpdate={fetchPairData} />
         </section>
         <section>
           <TransactionsPanel pairKey={pairData.pairKey} />
