@@ -1,6 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Image from "next/image"
+import { SwapService } from "@/services/swapService"
+import { Swap } from "../types/SwapTypes"
+import { formatLamports } from "@/lib/utils"
 
 import {
   Table,
@@ -12,23 +16,26 @@ import {
 } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ExternalLink } from "lucide-react"
-import { Transaction, transactionData } from "@/app/markets/components/Mockdata"
-
-
 
 interface TransactionsPanelProps {
   pairKey: string;
 }
 
 export default function TransactionsPanel({ pairKey }: TransactionsPanelProps) {
-    // Filter transactions for this pairKey
-    const transactions: Transaction[] = transactionData.filter(
-        tx => tx.contractAddress === pairKey
-    )
+    const [swaps, setSwaps] = useState<Swap[]>([])
+    const swapService = new SwapService()
+
+    useEffect(() => {
+        const fetchSwaps = async () => {
+            const swapData = await swapService.getSwapsByPair(pairKey)
+            setSwaps(swapData)
+        }
+        fetchSwaps()
+    }, [pairKey])
 
     return (
-        <div className="w-full mt-2">
-        <Tabs defaultValue="transactions" className="w-full">
+        <div className="w-full h-full">
+        <Tabs defaultValue="transactions" className="w-full h-full flex flex-col">
             <div className="border-b">
             <TabsList className="h-auto w-full justify-start space-x-6 bg-transparent px-4 rounded-none pb-0">
                 <TabsTrigger 
@@ -46,56 +53,60 @@ export default function TransactionsPanel({ pairKey }: TransactionsPanelProps) {
             </TabsList>
             </div>
             
-            <TabsContent value="transactions" className="mt-0">
+            <TabsContent value="transactions" className="mt-0 flex-1 overflow-auto">
             <div>
-                <Table className="text-sm">
+                <Table className="text-xs">
                 <TableHeader>
                     <TableRow>
                     <TableHead className="w-[120px] pl-7">DATE</TableHead>
                     <TableHead className="w-[100px]">TYPE</TableHead>
-                    <TableHead className="w-[100px]">PRICE USD</TableHead>
-                    <TableHead className="w-[100px]">TOTAL USD</TableHead>
-                    <TableHead className="w-[100px]">PRICE SOL</TableHead>
-                    <TableHead className="w-[100px]">AMOUNT</TableHead>
-                    <TableHead className="w-[100px]">TOTAL SOL</TableHead>
-                    <TableHead className="w-[120px]">TXN HASH</TableHead>
+                    <TableHead className="w-[100px]">AMOUNT IN</TableHead>
+                    <TableHead className="w-[100px]">TOKEN IN</TableHead>
+                    <TableHead className="w-[100px]">AMOUNT OUT</TableHead>
+                    <TableHead className="w-[100px]">TOKEN OUT</TableHead>
+                    <TableHead className="w-[100px]">AVG PRICE</TableHead>
+                    <TableHead className="w-[120px]">USER</TableHead>
                     </TableRow>
                 </TableHeader>
-                <TableBody className="text-sm">
-                    {transactions.length === 0 ? (
+                <TableBody className="text-xs">
+                    {swaps.length === 0 ? (
                     <TableRow>
                         <TableCell colSpan={8} className="text-center">
                         No transactions found
                         </TableCell>
                     </TableRow>
                     ) : (
-                    transactions.map((transaction, index) => (
+                    swaps.map((swap, index) => (
                         <TableRow key={index}>
-                        <TableCell className={`pl-7 ${transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}`}>{transaction.date}</TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>{transaction.type}</TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>${transaction.priceUsd}</TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>${transaction.totalUsd}</TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>
-                            <div className="flex items-center gap-3">
-                            <Image src="/images/tokens/solana.svg" alt="SOL" width={14} height={14}/>
-                            {transaction.priceSol}
-                            </div>
+                        <TableCell className={`pl-7 ${swap.isBuy ? 'text-green-500' : 'text-red-500'}`}>
+                            {new Date(swap.createdAt).toLocaleDateString()}
                         </TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>{transaction.amount}</TableCell>
-                        <TableCell className={transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}>
-                            <div className="flex items-center gap-3">
-                            <Image src="/images/tokens/solana.svg" alt="SOL" width={14} height={14} />
-                            {transaction.totalSol}
-                            </div>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {swap.isBuy ? 'Buy' : 'Sell'}
+                        </TableCell>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {formatLamports(swap.amountIn).toPrecision(5)}
+                        </TableCell>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {swap.tokenIn}
+                        </TableCell>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {formatLamports(swap.amountOut).toPrecision(5)}
+                        </TableCell>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {swap.tokenOut}
+                        </TableCell>
+                        <TableCell className={swap.isBuy ? 'text-green-500' : 'text-red-500'}>
+                            {swap.averagePrice.toPrecision(5)} SOL
                         </TableCell>
                         <TableCell>
                             <a
-                            href={`https://solscan.io/tx/${transaction.txnHash}`}
+                            href={`https://solscan.io/account/${swap.user}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center hover:text-lime-500 ${transaction.type === 'Buy' ? 'text-green-500' : 'text-red-500'}`}
+                            className={`flex items-center hover:text-lime-500 ${swap.isBuy ? 'text-green-500' : 'text-red-500'}`}
                             >
-                            {`${transaction.txnHash.slice(0, 6)}...${transaction.txnHash.slice(-4)}`}
+                            {`${swap.user.slice(0, 6)}...${swap.user.slice(-4)}`}
                             <ExternalLink className="ml-1 h-3 w-3" />
                             </a>
                         </TableCell>

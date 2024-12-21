@@ -21,30 +21,9 @@ import {
 import { RequireWallet } from "@/components/auth/RequireWallet"
 import { PairData } from "@/app/markets/types/MarketTypes"
 import { MarketService } from "@/services/marketService"
-
-
-// Mock data for requests (replace with actual data fetching)
-interface Request {
-  txnHash: string;
-  amount: string;
-  status: "Pending" | "Completed" | "Rejected";
-  age: string;
-}
-
-const mockRequests: Request[] = [
-  {
-    txnHash: "REQ1234ABCD5678EFGH",
-    amount: "1000 VTL",
-    status: "Pending",
-    age: "10 minutes",
-  },
-  {
-    txnHash: "REQMNOP1234QRST5678",
-    amount: "2000 VTL",
-    status: "Completed",
-    age: "1 hour",
-  },
-];
+import { Request } from "@/app/pair/types/RequestTypes";
+import { RequestService } from "@/services/requestService";
+import { LoadingScreen } from "@/components/ui/loading";
 
 export default function RequestPage() {
   const [pairData, setPairData] = useState<PairData | null>(null);
@@ -53,34 +32,71 @@ export default function RequestPage() {
   const [open, setOpen] = useState(false);
   const [adText, setAdText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   const params = useParams();
   const { connected, wallet} = useWallet();
   const { toast } = useToast();
   const marketService = useMemo(() => new MarketService(), []);
+  const requestService = useMemo(() => new RequestService(), []);
   const factoryService = useMemo(() => new FactoryService(), []);
 
+  const fetchRequests = async (pairKey: string) => {
+    if (!wallet?.publicKey) return;
+    const requestsData = await requestService.getRequestsByPairAndUser(
+      pairKey,
+      wallet.publicKey.toString()
+    );
+    setRequests(requestsData);
+  };
+
   useEffect(() => {
-    // Fetch pair data based on address
-    const fetchPairData = async () => {
-      const pair = await marketService.getPairByKey(params.address as string)
-        setPairData(pair || null)
+    const initializePage = async () => {
+      try {
+        setIsLoading(true);
+        const pair = await marketService.getPairByKey(params.address as string);
+        setPairData(pair || null);
+
+        if (pair && connected && wallet?.publicKey) {
+          await fetchRequests(pair.pairKey);
+        }
+        setIsInitialized(true);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch data. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    fetchPairData();
+    initializePage();
+  }, [params.address, marketService, requestService, wallet, connected]);
 
-    // Fetch requests data - replace with actual data fetching
-    setRequests(mockRequests);
+  if (!isInitialized || isLoading) {
+    return <LoadingScreen />;
+  }
 
-  }, [params.address, marketService]);
+  if (!pairData) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <span className="text-destructive">Pair not found</span>
+      </div>
+    );
+  }
 
-  if (!pairData) return <div>Pair not found</div>;
-
-  const filteredRequests = requests.filter(request => {
-    if (statusFilter === "all") return true;
-    if (statusFilter === "pending") return request.status === "Pending";
-    return request.status === "Completed";
-  });
+  const filteredRequests = requests
+    .filter(request => {
+      if (statusFilter === "all") return true;
+      if (statusFilter === "pending") return request.status === "Pending";
+      return request.status === "Accepted";
+    })
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const handleSubmitRequest = async () => {
     if (!connected || !wallet || !pairData || !adText.trim()) return;
@@ -92,15 +108,17 @@ export default function RequestPage() {
         new PublicKey(pairData.pairKey),
         new PublicKey(pairData.attentionToken),
         new PublicKey(pairData.creator),
-        0, // requestIndex - assuming first request type for now
+        0,
         adText.trim()
       );
       toast({
-          title: "Success!",
-          description: "Request submitted successfully!"
+        title: "Success!",
+        description: "Request submitted successfully!"
       });
       setOpen(false);
       setAdText("");
+      
+      await fetchRequests(pairData.pairKey);
       
     } catch (error) {
       console.error('Error submitting request:', error);
@@ -112,6 +130,16 @@ export default function RequestPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const toggleRowExpansion = (index: number) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (newExpandedRows.has(index)) {
+      newExpandedRows.delete(index);
+    } else {
+      newExpandedRows.add(index);
+    }
+    setExpandedRows(newExpandedRows);
   };
 
   return (
@@ -186,7 +214,7 @@ export default function RequestPage() {
               Pending Requests: {requests.filter(r => r.status === "Pending").length}
             </p>
             <p className="text-muted-foreground">
-              Completed Requests: {requests.filter(r => r.status === "Completed").length}
+              Completed Requests: {requests.filter(r => r.status === "Accepted").length}
             </p>
             {/* Filter Buttons */}
             <div className="flex gap-2 mt-4">
@@ -226,9 +254,9 @@ export default function RequestPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="pl-7 w-1/4">REQUEST</TableHead>
-                <TableHead className="w-1/6">AMOUNT</TableHead>
                 <TableHead className="w-1/6">STATUS</TableHead>
-                <TableHead className="w-1/6">AGE</TableHead>
+                <TableHead className="w-1/6">CREATED</TableHead>
+                <TableHead className="w-1/6">LAST UPDATED</TableHead>
                 <TableHead className="w-1/12">WITHDRAW</TableHead>
               </TableRow>
             </TableHeader>
@@ -242,26 +270,35 @@ export default function RequestPage() {
               ) : (
                 filteredRequests.map((request, index) => (
                   <TableRow key={index}>
-                    <TableCell className="pl-7" >
-                      <a
-                        href={`https://solscan.io/tx/${request.txnHash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center text-lime-500 hover:underline"
-                      >
-                        {`${request.txnHash.slice(0, 6)}...${request.txnHash.slice(-4)}`}
-                        <ExternalLink className="ml-1 h-3 w-3" />
-                      </a>
+                    <TableCell className="pl-7">
+                      <div className="text-sm text-muted-foreground">
+                        {expandedRows.has(index) ? request.adText : `${request.adText.slice(0, 50)}...`}{" "}
+                        <button 
+                          className="text-lime-500 hover:underline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleRowExpansion(index);
+                          }}
+                        >
+                          {expandedRows.has(index) ? '[see less]' : '[see more]'}
+                        </button>
+                      </div>
                     </TableCell>
-                    <TableCell>{request.amount}</TableCell>
                     <TableCell>{request.status}</TableCell>
-                    <TableCell>{request.age}</TableCell>
+                    <TableCell>
+                      {new Date(request.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(request.updatedAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>
                       <button
-                        className={`border-2 border-red-500 text-red-500 px-4 py-1.5 rounded-md transition-colors w-36 ${
-                          request.status === "Completed" ? "opacity-50 cursor-not-allowed" : "hover:bg-red-500 hover:text-white"
+                        className={`border-2 px-4 py-1.5 rounded-md transition-colors w-36 ${
+                          request.status !== "Pending" 
+                            ? "border-gray-500 text-gray-500 opacity-50 cursor-not-allowed" 
+                            : "border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
                         }`}
-                        disabled={request.status === "Completed"}
+                        disabled={request.status !== "Pending"}
                       >
                         Withdraw
                       </button>
