@@ -7,7 +7,6 @@ import SummaryPanel from "../components/SummaryPanel"
 import TransactionsPanel from "../components/TransactionsPanel"
 import ActionPanel from "../components/ActionPanel"
 import ChartPanel from "../components/ChartPanel"
-// import { data } from "@/app/markets/components/Mockdata"
 import { PairData } from "@/app/markets/types/MarketTypes"
 import { MarketService } from "@/services/marketService"
 import { LoadingScreen } from "@/components/ui/loading";
