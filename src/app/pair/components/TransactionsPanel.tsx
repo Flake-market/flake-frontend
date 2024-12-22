@@ -103,7 +103,7 @@ export default function TransactionsPanel({ pairKey }: TransactionsPanelProps) {
                             href={`https://solscan.io/account/${swap.user}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center hover:text-lime-500 ${swap.isBuy ? 'text-green-500' : 'text-red-500'}`}
+                            className={`flex items-center hover:text-grey-500 ${swap.isBuy ? 'text-green-500' : 'text-red-500'}`}
                             >
                             {`${swap.user.slice(0, 6)}...${swap.user.slice(-4)}`}
                             <ExternalLink className="ml-1 h-3 w-3" />

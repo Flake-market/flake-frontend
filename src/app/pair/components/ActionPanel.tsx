@@ -129,6 +129,7 @@ export default function ActionPanel({
         } else {
             // const solAmount = calculateSol(currentSupply, -Number(sanitizedValue), minPrice, maxPrice, maxSupply, spread);
             const solAmount = exactTokensToSol(currentSupply, Number(sanitizedValue));
+            console.log("solAmount", solAmount);
             if (solAmount === 0) {
                 setOutput("");
                 setAmount(0);
@@ -217,7 +218,7 @@ export default function ActionPanel({
                             href={`https://solscan.io/tx/${signature}?cluster=devnet`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-lime-500 hover:underline"
+                            className="text-sky-500 hover:underline"
                         >
                             View transaction
                         </a>
@@ -256,19 +257,19 @@ export default function ActionPanel({
                 value={isBuy.toString()}
             >
                 <TabsList className="grid w-full grid-cols-2 h-full rounded-md overflow-hidden">
-                    <TabsTrigger value="true" className="text-sm h-full data-[state=active]:bg-lime-600 data-[state=active]:text-white">Buy</TabsTrigger>
-                    <TabsTrigger value="false" className="text-sm h-full data-[state=active]:bg-lime-600 data-[state=active]:text-white">Sell</TabsTrigger>
+                    <TabsTrigger value="true" className="text-sm h-full data-[state=active]:border-black data-[state=active]:text-black">Buy</TabsTrigger>
+                    <TabsTrigger value="false" className="text-sm h-full data-[state=active]:border-black data-[state=active]:text-black">Sell</TabsTrigger>
                 </TabsList>
             </Tabs>
             <div className="flex flex-col mt-4 mx-4 mb-2">
-                <div className="flex justify-between items-center m-2 text-muted-foreground">
+                <div className="flex justify-between items-center m-2">
                     <Label className="text-sm">Amount ({isBuy ? 'SOL' : tokenTicker})</Label>
                     <Button
                         variant="link"
                         size="sm"
                         onClick={handleMaxSizeClick}
                         disabled={!wallet?.publicKey || (isBuy ? solBalance : atnBalance) === 0}
-                        className="h-6 px-2 text-sm text-lime-500"
+                        className="h-6 px-2 text-sm text-sky-500 hover:underline"
                     >
                         Balance: {isBuy ? solBalance : atnBalance} {isBuy ? pairToken : tokenTicker}
                     </Button>
@@ -310,10 +311,10 @@ export default function ActionPanel({
                     <TooltipTrigger asChild>
                         <div className="flex w-full justify-center items-center">
                             <Button 
-                                className={`w-full h-12 text-sm font-medium ${
+                                className={`w-full h-12 text-sm font-medium rounded-md transition-all duration-200 ${
                                     connected 
-                                    ? "bg-lime-500 hover:bg-lime-700 text-white" 
-                                    : "bg-gray-400 text-gray-100"
+                                    ? "border border-black bg-zinc-900 text-white hover:bg-zinc-900/80" 
+                                    : "border border-black bg-transparent text-black hover:bg-black/80"
                                 }`}
                                 disabled={!connected || isLoading || amount === 0 || amountOut === 0} 
                                 onClick={handleSwap}

@@ -12,7 +12,7 @@ export function RequireWallet({ children }: { children: ReactNode }) {
         <h1 className="text-2xl mb-4">Connect Wallet to Continue</h1>
         <button
           onClick={connect}
-          className="hover:text-lime-400 rounded-sm bg-lime-500 hover:bg-primary/20 px-4 py-1.5 transition-all duration-200"
+          className="border-2 border-black rounded-sm bg-black text-white px-4 py-1.5 transition-all duration-200 hover:bg-black/80"
         >
           Connect Wallet
         </button>
