@@ -3,7 +3,7 @@ import { Swap } from '@/app/pair/types/SwapTypes'
 
 export async function GET() {
     try {
-        const response = await fetch('http://localhost:3003/api/swaps')
+        const response = await fetch('https://backend-poc-885ae2550961.herokuapp.com/api/swaps')
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`)
         }

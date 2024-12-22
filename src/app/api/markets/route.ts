@@ -3,7 +3,7 @@ import { MarketResponse } from '@/app/markets/types/MarketTypes';
 
 export async function GET() {
     try {
-        const response = await fetch('http://localhost:3003/api/markets');
+        const response = await fetch('https://backend-poc-885ae2550961.herokuapp.com/api/markets');
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

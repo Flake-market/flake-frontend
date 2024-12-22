@@ -24,6 +24,7 @@ import { MarketService } from "@/services/marketService"
 import { Request } from "@/app/pair/types/RequestTypes";
 import { RequestService } from "@/services/requestService";
 import { LoadingScreen } from "@/components/ui/loading";
+import { Button } from "@/components/ui/button";
 
 export default function RequestPage() {
   const [pairData, setPairData] = useState<PairData | null>(null);
@@ -176,9 +177,10 @@ export default function RequestPage() {
             </p>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <button className="bg-grey-500 text-white px-8 py-2 rounded-md mt-4 hover:bg-grey-600 transition-colors">
-                  Request
-                </button>
+              <Button 
+                className="h-12 text-sm font-medium bg-zinc-900 border border-black text-white hover:bg-zinc-900/80">
+                Request
+                </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -190,15 +192,15 @@ export default function RequestPage() {
                   value={adText}
                   onChange={(e) => setAdText(e.target.value)}
                 />
-                <button 
-                  className={`bg-grey-500 text-white px-8 py-2 rounded-md mt-4 ${
+                <Button 
+                  className={`bg-zinc-900 border text-white px-8 py-2 rounded-md mt-4 border border-black text-white ${
                     isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-grey-600'
                   }`}
                   onClick={handleSubmitRequest}
                   disabled={isSubmitting || !adText.trim()}
                 >
                   {isSubmitting ? 'Submitting...' : `1000 ${pairData?.ticker}`}
-                </button>
+                </Button>
               </DialogContent>
             </Dialog>
           </div>
